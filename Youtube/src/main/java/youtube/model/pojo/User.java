@@ -1,4 +1,4 @@
-package youtube.model;
+package youtube.model.pojo;
 
 
 import lombok.Getter;

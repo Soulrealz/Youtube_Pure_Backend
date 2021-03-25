@@ -1,5 +1,4 @@
-package youtube.model;
-
+package youtube.model.pojo;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,16 +11,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "videos")
-public class Video {
+@Table(name = "playlists")
+public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
-    private LocalDateTime uploadDate;
-    private String description;
-    private String path;
-    private String link;
+    private LocalDateTime createDate;
     //TODO make @OneToOne(mappedBy = "?") mapping
     private int ownerId;
 }

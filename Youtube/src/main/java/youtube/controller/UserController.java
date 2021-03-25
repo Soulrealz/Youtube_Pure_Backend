@@ -13,12 +13,12 @@ import youtube.model.pojo.User;
 import youtube.model.services.UserService;
 
 @RestController
-public class UserController {
+public class UserController extends AbstractController{
 
     @Autowired
     private UserService userService;
-    
-    @PutMapping("/register")
+
+    @PutMapping("/users")
     public RegisterResponseUserDTO register(@RequestBody RegisterRequestUserDTO userDTO) {
         return userService.register(userDTO);
     }

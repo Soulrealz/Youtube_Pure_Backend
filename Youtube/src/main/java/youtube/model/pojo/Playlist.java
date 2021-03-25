@@ -1,24 +1,25 @@
-package youtube.model;
+package youtube.model.pojo;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-public class Comment {
+public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String text;
-    private LocalDateTime commentedOn;
+    private String title;
+    private LocalDateTime createDate;
     //TODO make @OneToOne(mappedBy = "?") mapping
-    private int userId;
-    private int videoId;
+    private int ownerId;
 }

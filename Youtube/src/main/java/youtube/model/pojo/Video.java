@@ -22,6 +22,8 @@ public class Video {
     private String description;
     private String path;
     private String link;
-    //TODO make @OneToOne(mappedBy = "?") mapping
-    private int ownerId;
+
+    @ManyToOne
+    @JoinColumn(name="owner_id")
+    private User owner;
 }

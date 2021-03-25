@@ -1,12 +1,15 @@
 package youtube.model.pojo;
 
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import youtube.model.dto.RegisterRequestUserDTO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -23,4 +26,15 @@ public class User {
    private String password;
    private String city;
    private LocalDateTime registerDate;
+
+   @OneToMany(mappedBy = "owner")
+   List<Video> videos;
+
+   public User(RegisterRequestUserDTO userDTO) {
+      username = userDTO.getUsername();
+      email = userDTO.getEmail();
+      age = userDTO.getAge();
+      password = userDTO.getPassword();
+      city = userDTO.getCity();
+   }
 }

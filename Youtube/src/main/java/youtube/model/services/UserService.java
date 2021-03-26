@@ -4,9 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
+import youtube.exceptions.NotFoundException;
+import youtube.model.dto.LoginUserDTO;
 import youtube.model.dto.RegisterRequestUserDTO;
 import youtube.model.dto.RegisterResponseUserDTO;
+import youtube.model.dto.UserWithoutPasswordDTO;
 import youtube.model.pojo.User;
 import youtube.model.repository.UserRepository;
 
@@ -42,5 +46,30 @@ public class UserService {
         RegisterResponseUserDTO responseUserDTO = new RegisterResponseUserDTO(user);
 
         return responseUserDTO;
+    }
+
+    public UserWithoutPasswordDTO login(LoginUserDTO loginDTO) {
+        User user = userRepository.findByUsername(loginDTO.getUsername());
+        if(user == null) {
+            throw new AuthenticationException("Wrong credentials.");
+        }
+        else {
+            PasswordEncoder encoder = new BCryptPasswordEncoder();
+            if(encoder.matches(loginDTO.getPassword(), user.getPassword())) {
+                return new UserWithoutPasswordDTO(user);
+            }
+            else {
+                throw new AuthenticationException("Wrong credentials.");
+            }
+        }
+    }
+
+    public UserWithoutPasswordDTO getUserByName(String username) {
+        User user = userRepository.findByUsername(username);
+        if(user == null) {
+            throw new NotFoundException("User with this username doesn't exist.");
+        }
+
+        return new UserWithoutPasswordDTO(user);
     }
 }

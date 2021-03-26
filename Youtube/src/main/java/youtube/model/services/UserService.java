@@ -33,7 +33,7 @@ public class UserService {
             throw new BadRequestException("This username is already taken.");
         }
 
-        //validate all user's information
+        //validate all users information
         userDTO.validateUserInformation();
 
         //encode the password
@@ -43,9 +43,8 @@ public class UserService {
         User user = new User(userDTO);
         user.setRegisterDate(LocalDateTime.now());
         user = userRepository.save(user);
-        RegisterResponseUserDTO responseUserDTO = new RegisterResponseUserDTO(user);
 
-        return responseUserDTO;
+        return new RegisterResponseUserDTO(user);
     }
 
     public UserWithoutPasswordDTO login(LoginUserDTO loginDTO) {

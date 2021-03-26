@@ -18,7 +18,7 @@ public class SessionManager {
         if(session.getAttribute(LOGGED_USER_ID) == null){
             throw new AuthenticationException("You have to log in!");
         }
-        else{
+        else {
             int userId = (int) session.getAttribute(LOGGED_USER_ID);
             return repository.findById(userId).get();
         }

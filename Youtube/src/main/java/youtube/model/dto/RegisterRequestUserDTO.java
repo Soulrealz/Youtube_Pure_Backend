@@ -32,7 +32,7 @@ public class RegisterRequestUserDTO {
 
         //checking if the entered confirmation password is correct
         if(!validatePasswordConfirmation()) {
-            throw new BadRequestException("The confirmation password is not correct.");
+            throw new BadRequestException("Passwords do not match.");
         }
 
         //check if the entered city is correct
@@ -49,8 +49,6 @@ public class RegisterRequestUserDTO {
 
     //method for checking if the password confirmation is correct
     public boolean validatePasswordConfirmation() {
-        System.out.println(password);
-        System.out.println(confirmPassword);
         return password.equals(confirmPassword);
     }
 
@@ -69,6 +67,6 @@ public class RegisterRequestUserDTO {
 
     //method for checking if the age are valid
     public boolean validateAge(){
-        return age > 0;
+        return age > 0 && age <= 100;
     }
 }

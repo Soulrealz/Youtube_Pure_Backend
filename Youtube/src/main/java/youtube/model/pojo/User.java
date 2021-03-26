@@ -27,7 +27,9 @@ public class User {
    private LocalDateTime registerDate;
 
    @OneToMany(mappedBy = "owner")
-   List<Video> videos;
+   private List<Video> videos;
+   @OneToMany(mappedBy = "commenter")
+   private List<Comment> comments;
 
    public User(RegisterRequestUserDTO userDTO) {
       username = userDTO.getUsername();

@@ -19,7 +19,13 @@ public class Comment {
     private int id;
     private String text;
     private LocalDateTime commentedOn;
-    //TODO make @OneToOne(mappedBy = "?") mapping
     private int userId;
     private int videoId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User commenter;
+    @ManyToOne
+    @JoinColumn(name = "video_id")
+    private Video onVideo;
 }

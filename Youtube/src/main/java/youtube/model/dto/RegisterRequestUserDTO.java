@@ -23,6 +23,7 @@ public class RegisterRequestUserDTO {
     private String confirmPassword;
     private String city;
 
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     public void validateUserInformation(){
         //checking if the email format is correct
@@ -46,7 +47,6 @@ public class RegisterRequestUserDTO {
         }
     }
 
-
     //method for checking if the password confirmation is correct
     public boolean validatePasswordConfirmation() {
         return password.equals(confirmPassword);
@@ -58,7 +58,6 @@ public class RegisterRequestUserDTO {
         return matcher.find();
     }
 
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     //method for checking if the city is valid
     public boolean validateCity() {

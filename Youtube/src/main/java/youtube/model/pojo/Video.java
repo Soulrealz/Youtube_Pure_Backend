@@ -27,5 +27,5 @@ public class Video {
     @JoinColumn(name = "owner_id")
     private User owner;
     @OneToMany(mappedBy = "onVideo")
-    private List<Video> videos;
+    private List<Comment> comments;
 }

@@ -19,8 +19,8 @@ public class Comment {
     private int id;
     private String text;
     private LocalDateTime commentedOn;
-    private int userId;
-    private int videoId;
+    private int uID;
+    private int vID;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -28,4 +28,12 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "video_id")
     private Video onVideo;
+
+    public Comment(String text, int uid, int vid) {
+        this.text = text;
+        uID = uid;
+        vID = vid;
+        commentedOn = LocalDateTime.now();
+    }
+
 }

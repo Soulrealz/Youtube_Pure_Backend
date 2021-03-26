@@ -21,7 +21,6 @@ public class Video {
     private LocalDateTime uploadDate;
     private String description;
     private String path;
-    private String link;
 
     @ManyToOne
     @JoinColumn(name="owner_id")

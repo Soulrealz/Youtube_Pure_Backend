@@ -19,6 +19,8 @@ public class Comment {
     private int id;
     private String text;
     private LocalDateTime commentedOn;
+    // names cannot be userID or videoID because for some reason
+    // theres a conflict with the names for the joincolumns below
     private int uID;
     private int vID;
 

@@ -9,6 +9,9 @@ import youtube.model.pojo.User;
 import youtube.model.repository.CommentRepository;
 import youtube.model.repository.VideoRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CommentService {
     @Autowired
@@ -25,5 +28,19 @@ public class CommentService {
         Comment comment = new Comment(text, u, v.get());
         commentRepository.save(comment);
         return new CommentDTO(comment);
+    }
+
+    public List<CommentDTO> getComments(String vidID) {
+        var v = videoRepository.findById(Integer.parseInt(vidID));
+        if (v.isEmpty()) {
+            throw new NotFoundException("No such video.");
+        }
+
+        List<CommentDTO> ls = new ArrayList<>();
+        for (Comment c : v.get().getComments()) {
+            ls.add(new CommentDTO(c));
+        }
+
+        return ls;
     }
 }

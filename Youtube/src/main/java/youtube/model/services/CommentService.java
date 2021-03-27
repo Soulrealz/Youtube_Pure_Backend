@@ -22,7 +22,7 @@ public class CommentService {
             throw new NotFoundException("Cannot comment on nonexistent video");
         }
 
-        Comment comment = new Comment(text, u.getId(), v.get().getId());
+        Comment comment = new Comment(text, u, v.get());
         commentRepository.save(comment);
         return new CommentDTO(comment);
     }

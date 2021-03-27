@@ -33,4 +33,24 @@ public class UserController extends AbstractController{
     public UserWithoutPasswordDTO getUserByUsername(@RequestParam String username) {
         return userService.getUserByName(username);
     }
+
+    @PostMapping("/users/edit")
+    public UserWithoutPasswordDTO editUser(@RequestBody EditRequestUserDTO userDTO, HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        return userService.editUser(userDTO, user);
+    }
+
+    @DeleteMapping("/users/delete")
+    public String deleteUser(HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        userService.deleteUser(user);
+        sessionManager.logoutUser(ses);
+        return "You have deleted your profile successfully!";
+    }
+
+    @PostMapping("/users/logout")
+    public String logout(HttpSession ses){
+        sessionManager.logoutUser(ses);
+        return "You have logged out.";
+    }
 }

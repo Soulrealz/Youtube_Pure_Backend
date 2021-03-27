@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import youtube.exceptions.BadRequestException;
+import youtube.model.validations.UserValidation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,49 +24,30 @@ public class RegisterRequestUserDTO {
     private String confirmPassword;
     private String city;
 
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     public void validateUserInformation(){
         //checking if the email format is correct
-        if(!validateEmail()) {
+        if(!UserValidation.validateEmail(email)) {
             throw new BadRequestException("You have entered invalid email.");
         }
 
         //checking if the entered confirmation password is correct
-        if(!validatePasswordConfirmation()) {
+        if(!UserValidation.validatePasswordConfirmation(password, confirmPassword)) {
             throw new BadRequestException("Passwords do not match.");
         }
 
         //check if the entered city is correct
-        if(!validateCity()) {
+        if(!UserValidation.validateCity(city)) {
             throw new BadRequestException("You have entered invalid city.");
         }
 
         //check if the entered age are correct
-        if(!validateAge()) {
+        if(!UserValidation.validateAge(age)) {
             throw new BadRequestException("You have entered invalid age.");
         }
     }
 
-    //method for checking if the password confirmation is correct
-    public boolean validatePasswordConfirmation() {
-        return password.equals(confirmPassword);
-    }
-
-    //method for checking if the email is valid
-    public boolean validateEmail () {
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
-        return matcher.find();
-    }
 
 
-    //method for checking if the city is valid
-    public boolean validateCity() {
-        return city.matches("[a-zA-Z]+");
-    }
-
-    //method for checking if the age are valid
-    public boolean validateAge(){
-        return age > 0 && age <= 100;
-    }
 }

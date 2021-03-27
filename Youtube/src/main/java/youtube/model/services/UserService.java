@@ -7,13 +7,11 @@ import org.springframework.stereotype.Service;
 import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
-import youtube.model.dto.LoginUserDTO;
-import youtube.model.dto.RegisterRequestUserDTO;
-import youtube.model.dto.RegisterResponseUserDTO;
-import youtube.model.dto.UserWithoutPasswordDTO;
+import youtube.model.dto.*;
 import youtube.model.pojo.User;
 import youtube.model.repository.UserRepository;
 
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 @Service
@@ -70,5 +68,16 @@ public class UserService {
         }
 
         return new UserWithoutPasswordDTO(user);
+    }
+
+    public UserWithoutPasswordDTO editUser(EditRequestUserDTO userDTO, User user) {
+        user.editUser(userDTO);
+
+        user = userRepository.save(user);
+        return new UserWithoutPasswordDTO(user);
+    }
+
+    public void deleteUser(User user) {
+        userRepository.delete(user);
     }
 }

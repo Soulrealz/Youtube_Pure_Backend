@@ -19,17 +19,19 @@ public class CommentController extends AbstractController {
 
     // Making comments on X video
     @PutMapping("/videos/{id}")
-    public CommentDTO makeComment(@RequestBody String text, @PathVariable(name = "id") String vidID, HttpSession ses) {
+    public CommentDTO makeComment(@PathVariable(name = "id") String vidID, @RequestBody String text, HttpSession ses) {
         User u = sessionManager.getLoggedUser(ses);
         return commentService.makeComment(vidID, text, u);
     }
 
-    /*
-    @PostMapping("/videos/{id}")
-    public CommentDTO editComment(@PathVariable) {
 
+    // Editing X comment
+    @PostMapping("/videos/comment/{id}")
+    public CommentDTO editComment(@PathVariable(name = "id") String commentId, @RequestBody String text, HttpSession ses) {
+        User u = sessionManager.getLoggedUser(ses);
+        return commentService.editComment(u, text, commentId);
     }
-     */
+
 
     // Showing all comments on X video
     @GetMapping("/videos/{id}")

@@ -2,6 +2,7 @@ package youtube.model.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dto.CommentDTO;
 import youtube.model.pojo.Comment;
@@ -29,7 +30,6 @@ public class CommentService {
         commentRepository.save(comment);
         return new CommentDTO(comment);
     }
-
     public List<CommentDTO> getComments(String vidID) {
         var v = videoRepository.findById(Integer.parseInt(vidID));
         if (v.isEmpty()) {
@@ -43,4 +43,28 @@ public class CommentService {
 
         return ls;
     }
+    public CommentDTO editComment(User u, String text, String commentId) {
+        // Checking if comment that was selected for editing
+        // was made by current logged in user
+        boolean isMadeByUser = false;
+        int cID = Integer.parseInt(commentId);
+        var v = u.getComments();
+        for (Comment c : v) {
+            if (c.getId() == cID) {
+                isMadeByUser = true;
+                break;
+            }
+        }
+
+        if (!isMadeByUser) {
+            throw new AuthenticationException("Cannot edit comment of another user");
+        }
+
+        // Editing and updating in db
+        Comment c = commentRepository.findById(cID).get();
+        c.setText(text);
+        commentRepository.save(c);
+        return new CommentDTO(c);
+    }
+
 }

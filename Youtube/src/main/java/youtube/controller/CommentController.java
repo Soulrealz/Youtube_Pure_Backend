@@ -18,10 +18,10 @@ public class CommentController extends AbstractController {
     private SessionManager sessionManager;
 
     // Making comments on X video
-    @PutMapping("/videos/{id}")
-    public CommentDTO makeComment(@PathVariable(name = "id") String vidID, @RequestBody String text, HttpSession ses) {
+    @PutMapping("/videos")
+    public CommentDTO makeComment(@RequestParam String name, @RequestBody String text, HttpSession ses) {
         User u = sessionManager.getLoggedUser(ses);
-        return commentService.makeComment(vidID, text, u);
+        return commentService.makeComment(name, text, u);
     }
 
 

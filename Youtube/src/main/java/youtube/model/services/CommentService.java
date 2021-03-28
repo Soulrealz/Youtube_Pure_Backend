@@ -7,6 +7,7 @@ import youtube.exceptions.NotFoundException;
 import youtube.model.dto.CommentDTO;
 import youtube.model.pojo.Comment;
 import youtube.model.pojo.User;
+import youtube.model.pojo.Video;
 import youtube.model.repository.CommentRepository;
 import youtube.model.repository.VideoRepository;
 
@@ -21,12 +22,12 @@ public class CommentService {
     private VideoRepository videoRepository;
 
     public CommentDTO makeComment(String title, String text, User u) {
-        var v = videoRepository.findById(Integer.parseInt(title));
-        if (v.isEmpty()) {
+        Video v = videoRepository.findByTitle(title);
+        if (v == null) {
             throw new NotFoundException("Cannot comment on nonexistent video");
         }
 
-        Comment comment = new Comment(text, u, v.get());
+        Comment comment = new Comment(text, u, v);
         commentRepository.save(comment);
         return new CommentDTO(comment);
     }

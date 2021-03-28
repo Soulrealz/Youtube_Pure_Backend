@@ -18,7 +18,7 @@ public class Playlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
     @ManyToOne
     @JoinColumn(name = "owner_id")
     @JsonBackReference

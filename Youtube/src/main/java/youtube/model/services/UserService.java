@@ -107,6 +107,7 @@ public class UserService {
         Playlist playlist = new Playlist();
         playlist.setTitle(title);
         playlist.setOwner(user);
-        playlist.setCreateDate(LocalDateTime.now());
+        playlist.setCreatedDate(LocalDateTime.now());
+        playlistRepository.save(playlist);
     }
 }

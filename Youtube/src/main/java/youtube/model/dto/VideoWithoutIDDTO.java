@@ -18,13 +18,13 @@ public class VideoWithoutIDDTO {
     private LocalDateTime uploadDate;
     private String description;
     private String path;
-    private User owner;
+    private String ownerName;
 
     public VideoWithoutIDDTO(Video video) {
         title = video.getTitle();
         uploadDate = video.getUploadDate();
         description = video.getDescription();
         path = video.getPath();
-        owner = video.getOwner();
+        ownerName = video.getOwner().getUsername();
     }
 }

@@ -25,8 +25,13 @@ public class VideoController extends AbstractController {
     */
 
     // Getting all videos with {title} name
+   // @GetMapping("/videos")
+   // public List<VideoWithoutIDDTO> getVideo(@RequestParam String title) {
+        //return videoService.getAllVideos(title);
+  //  }
+
     @GetMapping("/videos")
-    public List<VideoWithoutIDDTO> getVideo(@RequestParam String title) {
-        return videoService.getAllVideos(title);
+    public VideoWithoutIDDTO getVideoByName(@RequestParam String title) {
+        return videoService.getByName(title);
     }
 }

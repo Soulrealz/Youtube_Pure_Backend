@@ -37,4 +37,13 @@ public class VideoService {
 
         return ls;
     }
+
+    public VideoWithoutIDDTO getByName(String title) {
+        if(videoRepository.findByTitle(title) == null) {
+            throw new NotFoundException("There is no video with that name.");
+        }
+
+        Video video = videoRepository.findByTitle(title);
+        return new VideoWithoutIDDTO(video);
+    }
 }

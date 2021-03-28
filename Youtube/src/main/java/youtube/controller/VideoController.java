@@ -15,15 +15,6 @@ public class VideoController extends AbstractController {
     @Autowired
     private VideoService videoService;
 
-    // Cannot get video by ID, method is not detected
-    // legit not found at all
-    /*
-    @GetMapping("/videos/{id}")
-    public VideoWithoutIDDTO getVideo(@PathVariable(name = "id") int videoId) {
-        return videoService.getVideoByID(videoId);
-    }
-    */
-
     // Getting all videos with {title} name
     @GetMapping("/videos")
     public List<VideoWithoutIDDTO> getVideo(@RequestParam String title) {

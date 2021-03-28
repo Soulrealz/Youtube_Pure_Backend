@@ -1,6 +1,5 @@
 package youtube.controller;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import youtube.model.dto.CommentDTO;
@@ -24,7 +23,6 @@ public class CommentController extends AbstractController {
         return commentService.makeComment(name, text, u);
     }
 
-
     // Editing X comment
     @PostMapping("/videos/comment/{id}")
     public CommentDTO editComment(@PathVariable(name = "id") String commentId, @RequestBody String text, HttpSession ses) {
@@ -32,10 +30,19 @@ public class CommentController extends AbstractController {
         return commentService.editComment(u, text, commentId);
     }
 
-
     // Showing all comments on X video
-    @GetMapping("/videos/{id}")
-    public List<CommentDTO> showComments(@PathVariable(name = "id") String vidID) {
-        return commentService.getComments(vidID);
+    @GetMapping("/video/comments")
+    public List<CommentDTO> showComments(@RequestParam(name = "name") String name) {
+        return commentService.getComments(name);
     }
+
+    // Deleting X comment on Y video
+    @DeleteMapping("/comments/{id}")
+    public String deleteComment(@PathVariable(name = "id") String id, HttpSession ses) {
+        User u = sessionManager.getLoggedUser(ses);
+        commentService.deleteComment(u, id);
+        return "Deleted comment";
+    }
+
+
 }

@@ -11,6 +11,7 @@ import youtube.model.pojo.Video;
 import youtube.model.repository.CommentRepository;
 import youtube.model.repository.VideoRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,14 +32,14 @@ public class CommentService {
         commentRepository.save(comment);
         return new CommentDTO(comment);
     }
-    public List<CommentDTO> getComments(String vidID) {
-        var v = videoRepository.findById(Integer.parseInt(vidID));
-        if (v.isEmpty()) {
+    public List<CommentDTO> getComments(String vidName) {
+        Video v = videoRepository.findByTitle(vidName);
+        if (v == null) {
             throw new NotFoundException("No such video.");
         }
 
         List<CommentDTO> ls = new ArrayList<>();
-        for (Comment c : v.get().getComments()) {
+        for (Comment c : v.getComments()) {
             ls.add(new CommentDTO(c));
         }
 
@@ -67,5 +68,24 @@ public class CommentService {
         commentRepository.save(c);
         return new CommentDTO(c);
     }
+    public void deleteComment(User u, String id) {
+        var v = commentRepository.findById(Integer.parseInt(id));
+        if (v.isEmpty()) {
+            throw new NotFoundException("Cannot delete nonexistent comment");
+        }
 
+        boolean isCommentByCurrUser = false;
+        for (Comment c : u.getComments()) {
+            if (c.getId() == v.get().getId()) {
+                isCommentByCurrUser = true;
+                break;
+            }
+        }
+
+        if (!isCommentByCurrUser) {
+            throw new AuthenticationException("Cannot delete comment that was not made by you");
+        }
+
+        commentRepository.delete(v.get());
+    }
 }

@@ -4,27 +4,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 @Component
+@Setter
+@Getter
 @NoArgsConstructor
-public class VideoWithoutIDDTO {
+public class VideoWithoutOwnerDTO {
+    private int id;
     private String title;
     private LocalDateTime uploadDate;
     private String description;
     private String path;
-    private User owner;
 
-    public VideoWithoutIDDTO(Video video) {
+
+    public VideoWithoutOwnerDTO(Video video) {
+        id = video.getId();
         title = video.getTitle();
         uploadDate = video.getUploadDate();
         description = video.getDescription();
         path = video.getPath();
-        owner = video.getOwner();
     }
 }

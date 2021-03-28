@@ -1,6 +1,7 @@
 package youtube.model.pojo;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,9 +33,15 @@ public class User {
    private LocalDateTime registerDate;
 
    @OneToMany(mappedBy = "owner")
+   @JsonManagedReference
    private List<Video> videos;
+
    @OneToMany(mappedBy = "commenter")
    private List<Comment> comments;
+
+   @OneToMany(mappedBy = "owner")
+   @JsonManagedReference
+   private List<Playlist> playlists;
 
    public User(RegisterRequestUserDTO userDTO) {
       username = userDTO.getUsername();

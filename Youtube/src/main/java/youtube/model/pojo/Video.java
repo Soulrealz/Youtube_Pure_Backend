@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import youtube.model.dto.UploadVideoDTO;
+import youtube.model.dto.videosDTO.UploadVideoDTO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

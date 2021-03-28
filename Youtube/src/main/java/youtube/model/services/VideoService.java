@@ -3,13 +3,12 @@ package youtube.model.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import youtube.exceptions.NotFoundException;
-import youtube.model.dto.VideoWithoutIDDTO;
+import youtube.model.dto.videosDTO.VideoWithoutIDDTO;
 import youtube.model.pojo.Video;
 import youtube.model.repository.VideoRepository;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VideoService {

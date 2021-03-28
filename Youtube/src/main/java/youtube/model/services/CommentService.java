@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.NotFoundException;
-import youtube.model.dto.CommentDTO;
+import youtube.model.dto.commentsDTO.CommentDTO;
 import youtube.model.pojo.Comment;
 import youtube.model.pojo.User;
 import youtube.model.pojo.Video;

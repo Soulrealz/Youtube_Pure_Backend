@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
-import youtube.model.dto.*;
+import youtube.model.dto.usersDTO.*;
+import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.pojo.Playlist;
 import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
@@ -15,7 +16,6 @@ import youtube.model.repository.PlaylistRepository;
 import youtube.model.repository.UserRepository;
 import youtube.model.repository.VideoRepository;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 @Service

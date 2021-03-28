@@ -1,9 +1,8 @@
 package youtube.controller;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import youtube.model.dto.CommentDTO;
+import youtube.model.dto.commentsDTO.CommentDTO;
 import youtube.model.pojo.User;
 import youtube.model.services.CommentService;
 

@@ -4,7 +4,7 @@ package youtube.model.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import youtube.exceptions.NotFoundException;
-import youtube.model.dto.PlaylistWithoutIdDTO;
+import youtube.model.dto.playlistsDTO.PlaylistWithoutIdDTO;
 import youtube.model.pojo.Playlist;
 import youtube.model.repository.PlaylistRepository;
 

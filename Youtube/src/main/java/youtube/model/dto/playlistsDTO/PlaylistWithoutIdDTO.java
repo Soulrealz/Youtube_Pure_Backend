@@ -1,4 +1,4 @@
-package youtube.model.dto;
+package youtube.model.dto.playlistsDTO;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

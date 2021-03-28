@@ -1,37 +1,33 @@
-package youtube.model.dto;
+package youtube.model.dto.usersDTO;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import youtube.model.pojo.User;
-import youtube.model.pojo.Video;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
-@Component
-@Getter
+
 @Setter
+@Getter
 @NoArgsConstructor
-public class UserWithoutPasswordDTO {
+@Component
+public class RegisterResponseUserDTO {
     private int id;
     private String username;
     private String email;
     private int age;
     private String city;
-    private List<VideoWithoutOwnerDTO> videos;
+    private LocalDateTime registerDate;
 
-    public UserWithoutPasswordDTO(User user) {
+
+    public RegisterResponseUserDTO(User user){
         id = user.getId();
         username = user.getUsername();
         email = user.getEmail();
         age = user.getAge();
         city = user.getCity();
-        videos = new ArrayList<>();
-        for(Video v : user.getVideos()) {
-            videos.add(new VideoWithoutOwnerDTO(v));
-        }
+        registerDate = user.getRegisterDate();
     }
 }

@@ -1,4 +1,4 @@
-package youtube.model.dto;
+package youtube.model.dto.usersDTO;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

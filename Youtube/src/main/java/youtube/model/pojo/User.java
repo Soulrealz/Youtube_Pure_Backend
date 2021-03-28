@@ -8,8 +8,8 @@ import lombok.Setter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import youtube.exceptions.BadRequestException;
-import youtube.model.dto.EditRequestUserDTO;
-import youtube.model.dto.RegisterRequestUserDTO;
+import youtube.model.dto.usersDTO.EditRequestUserDTO;
+import youtube.model.dto.usersDTO.RegisterRequestUserDTO;
 import youtube.model.validations.UserValidation;
 
 import javax.persistence.*;

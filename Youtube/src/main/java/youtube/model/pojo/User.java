@@ -1,10 +1,16 @@
 package youtube.model.pojo;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import youtube.exceptions.BadRequestException;
+import youtube.model.dto.EditRequestUserDTO;
 import youtube.model.dto.RegisterRequestUserDTO;
+import youtube.model.validations.UserValidation;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -27,9 +33,15 @@ public class User {
    private LocalDateTime registerDate;
 
    @OneToMany(mappedBy = "owner")
+   @JsonManagedReference
    private List<Video> videos;
+
    @OneToMany(mappedBy = "commenter")
    private List<Comment> comments;
+
+   @OneToMany(mappedBy = "owner")
+   @JsonManagedReference
+   private List<Playlist> playlists;
 
    public User(RegisterRequestUserDTO userDTO) {
       username = userDTO.getUsername();
@@ -37,5 +49,38 @@ public class User {
       age = userDTO.getAge();
       password = userDTO.getPassword();
       city = userDTO.getCity();
+   }
+
+
+   //method used for editing user profile
+   public void editUser(EditRequestUserDTO userDTO){
+      if(userDTO.getEmail() != null) {
+         if(!UserValidation.validateEmail(email)) {
+            throw new BadRequestException("You have entered invalid email.");
+         }
+         email = userDTO.getEmail();
+      }
+      if(userDTO.getAge() != 0) {
+         if(!UserValidation.validateAge(age)) {
+            throw new BadRequestException("You have entered invalid age.");
+         }
+         age = userDTO.getAge();
+      }
+      if(userDTO.getCity() != null) {
+         if(!UserValidation.validateCity(city)) {
+            throw new BadRequestException("You have entered invalid city.");
+         }
+         city = userDTO.getCity();
+      }
+      if(userDTO.getPassword() != null && userDTO.getConfirmPassword() != null) {
+         if(!UserValidation.validatePasswordConfirmation(userDTO.getPassword(), userDTO.getConfirmPassword())) {
+            throw new BadRequestException("Passwords do not match.");
+         }
+
+         PasswordEncoder encoder = new BCryptPasswordEncoder();
+         userDTO.setPassword(encoder.encode(userDTO.getPassword()));
+         password = userDTO.getPassword();
+      }
+
    }
 }

@@ -1,12 +1,15 @@
 package youtube.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import youtube.model.pojo.User;
+import youtube.model.pojo.Video;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Getter
@@ -18,7 +21,7 @@ public class UserWithoutPasswordDTO {
     private String email;
     private int age;
     private String city;
-
+    private List<VideoWithoutOwnerDTO> videos;
 
     public UserWithoutPasswordDTO(User user) {
         id = user.getId();
@@ -26,5 +29,9 @@ public class UserWithoutPasswordDTO {
         email = user.getEmail();
         age = user.getAge();
         city = user.getCity();
+        videos = new ArrayList<>();
+        for(Video v : user.getVideos()) {
+            videos.add(new VideoWithoutOwnerDTO(v));
+        }
     }
 }

@@ -1,5 +1,6 @@
 package youtube.model.pojo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,8 @@ public class Playlist {
     private int id;
     private String title;
     private LocalDateTime createDate;
-    //TODO make @OneToOne(mappedBy = "?") mapping
-    private int ownerId;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    @JsonBackReference
+    private User owner;
 }

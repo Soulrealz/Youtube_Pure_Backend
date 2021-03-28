@@ -1,9 +1,11 @@
 package youtube.model.pojo;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import youtube.model.dto.UploadVideoDTO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,7 +27,16 @@ public class Video {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
+    @JsonBackReference
     private User owner;
     @OneToMany(mappedBy = "onVideo")
     private List<Comment> comments;
+
+
+    public Video(UploadVideoDTO videoDTO){
+        this.title = videoDTO.getTitle();
+        this.description = videoDTO.getDescription();
+        this.path = videoDTO.getPath();
+        this.uploadDate = LocalDateTime.now();
+    }
 }

@@ -1,6 +1,7 @@
 package youtube.model.pojo;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import youtube.model.validations.UserValidation;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -42,6 +44,19 @@ public class User {
    @OneToMany(mappedBy = "owner")
    @JsonManagedReference
    private List<Playlist> playlists;
+
+   @ManyToMany
+   @JoinTable(
+           name = "subscriptions",
+           joinColumns = {@JoinColumn(name = "subscribed_to_id")},
+           inverseJoinColumns = {@JoinColumn(name = "subscriber_id")}
+   )
+   @JsonManagedReference
+   private List<User> subscribers;
+
+   @ManyToMany(mappedBy = "subscribers")
+   @JsonBackReference
+   private List<User> subscribedTo;
 
    public User(RegisterRequestUserDTO userDTO) {
       username = userDTO.getUsername();

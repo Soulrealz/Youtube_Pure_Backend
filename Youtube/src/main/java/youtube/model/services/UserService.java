@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
+import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.dto.usersDTO.*;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
+import youtube.model.dto.videosDTO.VideoWithoutOwnerDTO;
 import youtube.model.pojo.Playlist;
 import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
@@ -17,6 +19,8 @@ import youtube.model.repository.UserRepository;
 import youtube.model.repository.VideoRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -109,5 +113,49 @@ public class UserService {
         playlist.setOwner(user);
         playlist.setCreatedDate(LocalDateTime.now());
         playlistRepository.save(playlist);
+    }
+
+    public List<VideoWithoutOwnerDTO> getVideos(User user) {
+        List<Video> userVideos = videoRepository.findAllByOwner(user);
+        if(userVideos.size() == 0) {
+            throw new NotFoundException("You don't have uploaded videos.");
+        }
+
+        List<VideoWithoutOwnerDTO> returnedVideos = new ArrayList<>();
+        for(Video video : userVideos) {
+            returnedVideos.add(new VideoWithoutOwnerDTO(video));
+        }
+
+        return returnedVideos;
+    }
+
+    public List<PlaylistWithoutOwnerDTO> getPlaylists(User user) {
+        List<Playlist> userPlaylists = playlistRepository.findAllByOwner(user);
+        if(userPlaylists.size() == 0) {
+            throw new NotFoundException("You don't have created playlists.");
+        }
+
+        List<PlaylistWithoutOwnerDTO> returnedPlaylists = new ArrayList<>();
+        for(Playlist playlist : userPlaylists) {
+            returnedPlaylists.add(new PlaylistWithoutOwnerDTO(playlist));
+        }
+
+        return returnedPlaylists;
+    }
+
+    public String subscribe(int id, User user) {
+        User subscribeToUser = userRepository.findById(id).get();
+
+        if(subscribeToUser == null) {
+            throw new NotFoundException("The user you want to subscribe to doesn't exist");
+        }
+
+        if(subscribeToUser.getSubscribers().contains(user)) {
+            throw new BadRequestException("You are already subscribed to this user.");
+        }
+
+        subscribeToUser.getSubscribers().add(user);
+        userRepository.save(subscribeToUser);
+        return "You have successfully subscribed to " + subscribeToUser.getUsername();
     }
 }

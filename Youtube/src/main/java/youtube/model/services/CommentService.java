@@ -6,6 +6,7 @@ import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dto.commentsDTO.CommentDTO;
+import youtube.model.dto.commentsDTO.EditedCommentDTO;
 import youtube.model.pojo.Comment;
 import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
@@ -26,70 +27,55 @@ public class CommentService {
     @Autowired
     private UserRepository userRepository;
 
-    public CommentDTO makeComment(String title, String text, User user) {
-        Video video = videoRepository.findByTitle(title);
-        if (video == null) {
+    public CommentDTO makeComment(int videoID, String text, User user) {
+        // Check if video exists
+        Optional<Video> video = videoRepository.findById(videoID);
+        if (video.isEmpty()) {
             throw new NotFoundException("Cannot comment on nonexistent video");
         }
 
-        Comment comment = new Comment(text, user, video);
+        // Make and save comment
+        Comment comment = new Comment(text, user, video.get());
         commentRepository.save(comment);
+
         return new CommentDTO(comment);
     }
-    public List<CommentDTO> getComments(String vidName) {
-        Video video = videoRepository.findByTitle(vidName);
-        if (video == null) {
+
+    public List<CommentDTO> getComments(int videoID) {
+        Optional<Video> video = videoRepository.findById(videoID);
+        if (video.isEmpty()) {
             throw new NotFoundException("No such video.");
         }
 
         List<CommentDTO> ls = new ArrayList<>();
-        for (Comment comment : video.getComments()) {
+        for (Comment comment : video.get().getComments()) {
             ls.add(new CommentDTO(comment));
         }
         return ls;
     }
-    public CommentDTO editComment(User user, String text, String commentId) {
-        // Checking if comment that was selected for editing
-        // was made by current logged in user
-        boolean isMadeByUser = false;
-        int commentID = Integer.parseInt(commentId);
-        List<Comment> listComments = user.getComments();
-        for (Comment comment : listComments) {
-            if (comment.getId() == commentID) {
-                isMadeByUser = true;
-                break;
-            }
+
+    public EditedCommentDTO editComment(User user, String text, int commentID) {
+        // Check if comment exists or if trying to edit comment of another user
+        Comment comment = returnExistingComment(commentRepository.findById(commentID));
+        if (!user.getComments().contains(comment)) {
+            throw new BadRequestException("Cannot edit comment of another user");
         }
 
-        if (!isMadeByUser) {
-            throw new AuthenticationException("Cannot edit comment of another user");
-        }
-
-        // Editing and updating in db
-        Comment comment = commentRepository.findById(commentID).get();
+        // Edit and save updated comment
         comment.setText(text);
         commentRepository.save(comment);
-        return new CommentDTO(comment);
+
+        return new EditedCommentDTO(comment);
     }
-    public void deleteComment(User user, String id) {
-        Optional<Comment> comment = commentRepository.findById(Integer.parseInt(id));
-        if (comment.isEmpty()) {
-            throw new NotFoundException("Cannot delete nonexistent comment");
+
+    public void deleteComment(User user, int commentID) {
+        // Check if comment exists or if trying to delete comment of other user
+        Comment comment = returnExistingComment(commentRepository.findById(commentID));
+        if (!user.getComments().contains(comment)) {
+            throw new BadRequestException("Cannot delete comment of another user");
         }
 
-        boolean isCommentByCurrUser = false;
-        for (Comment comm : user.getComments()) {
-            if (comm.getId() == comment.get().getId()) {
-                isCommentByCurrUser = true;
-                break;
-            }
-        }
-
-        if (!isCommentByCurrUser) {
-            throw new AuthenticationException("Cannot delete comment that was not made by you");
-        }
-
-        commentRepository.delete(comment.get());
+        commentRepository.delete(comment);
     }
 
     public CommentDTO likeComment(User user, int commentID) {
@@ -140,6 +126,7 @@ public class CommentService {
 
         return new CommentDTO(comment);
     }
+    
     private Comment returnExistingComment(Optional<Comment> comment) {
         if (comment.isEmpty()) {
             throw new NotFoundException("Comment doesn't exist");

@@ -54,6 +54,7 @@ public class CommentController extends AbstractController {
         return "Deleted comment";
     }
 
+    
     // PathVar - which comment to like/dislike/remove like/remove dislike
     // RequestParam - 1 = like, -1 = dislike, 0 = remove current status(if any)
     @PostMapping("/comments/{id}")

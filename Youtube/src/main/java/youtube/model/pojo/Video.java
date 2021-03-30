@@ -40,7 +40,6 @@ public class Video {
     public Video(UploadVideoDTO videoDTO){
         this.title = videoDTO.getTitle();
         this.description = videoDTO.getDescription();
-        this.path = videoDTO.getPath();
         this.uploadDate = LocalDateTime.now();
     }
 }

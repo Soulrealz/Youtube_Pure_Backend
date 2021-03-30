@@ -27,4 +27,11 @@ public class PlaylistController extends AbstractController {
         User user = sessionManager.getLoggedUser(ses);
         return playlistService.addVideo(user, id, title);
     }
+
+    @PutMapping("/playlists/create_playlist")
+    public String createPlaylist(@RequestParam String title, HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        playlistService.createPlaylist(title, user);
+        return "You have created new playlist.";
+    }
 }

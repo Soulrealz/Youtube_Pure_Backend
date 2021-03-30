@@ -1,9 +1,11 @@
 package youtube.model.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
@@ -18,6 +20,10 @@ import youtube.model.repository.PlaylistRepository;
 import youtube.model.repository.UserRepository;
 import youtube.model.repository.VideoRepository;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,27 +99,6 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public UserWithoutPasswordDTO uploadVideo(UploadVideoDTO videoDTO, User user) {
-       if(videoRepository.findByTitle(videoDTO.getTitle()) != null) {
-           throw new BadRequestException("This video title is already used.");
-       }
-       Video video = new Video(videoDTO);
-       video.setOwner(user);
-       video = videoRepository.save(video);
-       return new UserWithoutPasswordDTO(userRepository.findByUsername(user.getUsername()));
-    }
-
-    public void createPlaylist(String title, User user) {
-        if(playlistRepository.findByTitle(title) != null) {
-            throw new BadRequestException("This playlist title is already used.");
-        }
-
-        Playlist playlist = new Playlist();
-        playlist.setTitle(title);
-        playlist.setOwner(user);
-        playlist.setCreatedDate(LocalDateTime.now());
-        playlistRepository.save(playlist);
-    }
 
     public List<VideoWithoutOwnerDTO> getVideos(User user) {
         List<Video> userVideos = videoRepository.findAllByOwner(user);

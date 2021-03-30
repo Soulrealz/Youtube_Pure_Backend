@@ -3,6 +3,7 @@ package youtube.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.dto.usersDTO.*;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
@@ -56,19 +57,6 @@ public class UserController extends AbstractController {
     public String logout(HttpSession ses) {
         sessionManager.logoutUser(ses);
         return "You have logged out.";
-    }
-
-    @PutMapping("/users/upload")
-    public UserWithoutPasswordDTO uploadVideo(@RequestBody UploadVideoDTO videoDTO, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
-        return userService.uploadVideo(videoDTO, user);
-    }
-
-    @PutMapping("/users/create_playlist")
-    public String createPlaylist(@RequestParam String title, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
-        userService.createPlaylist(title, user);
-        return "You have created new playlist.";
     }
 
     @GetMapping("/users/user_videos")

@@ -17,7 +17,6 @@ public class VideoWithoutOwnerDTO {
     private String title;
     private LocalDateTime uploadDate;
     private String description;
-    private String path;
 
 
     public VideoWithoutOwnerDTO(Video video) {
@@ -25,6 +24,5 @@ public class VideoWithoutOwnerDTO {
         title = video.getTitle();
         uploadDate = video.getUploadDate();
         description = video.getDescription();
-        path = video.getPath();
     }
 }

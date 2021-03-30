@@ -13,6 +13,8 @@ import youtube.model.pojo.Video;
 import youtube.model.repository.PlaylistRepository;
 import youtube.model.repository.VideoRepository;
 
+import java.time.LocalDateTime;
+
 @Service
 public class PlaylistService {
 
@@ -20,6 +22,18 @@ public class PlaylistService {
     private PlaylistRepository playlistRepository;
     @Autowired
     private VideoRepository videoRepository;
+
+    public void createPlaylist(String title, User user) {
+        if(playlistRepository.findByTitle(title) != null) {
+            throw new BadRequestException("This playlist title is already used.");
+        }
+
+        Playlist playlist = new Playlist();
+        playlist.setTitle(title);
+        playlist.setOwner(user);
+        playlist.setCreatedDate(LocalDateTime.now());
+        playlistRepository.save(playlist);
+    }
 
     public PlaylistWithoutIdDTO getByName(String title) {
         if(playlistRepository.findByTitle(title) == null) {

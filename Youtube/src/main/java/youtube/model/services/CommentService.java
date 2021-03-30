@@ -114,7 +114,7 @@ public class CommentService {
 
         return new CommentDTO(comment);
     }
-    public CommentDTO removeCurrStatusOnComment(User user, int commentID) {
+    public CommentDTO neutralStateComment(User user, int commentID) {
         // Check if comment exists
         Comment comment = returnExistingComment(commentRepository.findById(commentID));
 

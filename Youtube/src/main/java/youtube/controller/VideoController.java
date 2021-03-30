@@ -10,6 +10,7 @@ import youtube.model.pojo.User;
 import youtube.model.services.VideoService;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 public class VideoController extends AbstractController {
@@ -41,7 +42,6 @@ public class VideoController extends AbstractController {
         return videoService.uploadVideoFile(videoFile, id, user);
     }
 
-
     // PathVar - which video to like/dislike/remove like/remove dislike
     // RequestParam - 1 = like, -1 = dislike, 0 = remove current status(if any)
     @PostMapping("/videos/{id}")
@@ -50,5 +50,10 @@ public class VideoController extends AbstractController {
         if (action.equals("1")) return videoService.likeVideo(user, videoID);
         else if (action.equals("-1")) return videoService.dislikeVideo(user, videoID);
         else return videoService.neutralStateVideo(user, videoID);
+    }
+
+    @GetMapping("/videos/sort_upload_date")
+    public List<VideoWithoutIDDTO> sortByUploadDate(){
+        return videoService.sortByUploadDate();
     }
 }

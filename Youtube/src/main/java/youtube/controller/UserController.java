@@ -3,15 +3,18 @@ package youtube.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.dto.usersDTO.*;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
+import youtube.model.dto.videosDTO.VideoWithoutOwnerDTO;
 import youtube.model.pojo.User;
 import youtube.model.services.UserService;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
-public class UserController extends AbstractController{
+public class UserController extends AbstractController {
 
     @Autowired
     private UserService userService;
@@ -41,7 +44,7 @@ public class UserController extends AbstractController{
         return userService.editUser(userDTO, user);
     }
 
-    @DeleteMapping("/users/delete")
+    @DeleteMapping("/users")
     public String deleteUser(HttpSession ses) {
         User user = sessionManager.getLoggedUser(ses);
         userService.deleteUser(user);
@@ -50,7 +53,7 @@ public class UserController extends AbstractController{
     }
 
     @PostMapping("/users/logout")
-    public String logout(HttpSession ses){
+    public String logout(HttpSession ses) {
         sessionManager.logoutUser(ses);
         return "You have logged out.";
     }
@@ -62,9 +65,28 @@ public class UserController extends AbstractController{
     }
 
     @PutMapping("/users/create_playlist")
-    public String createPlaylist(@RequestParam String title, HttpSession ses){
+    public String createPlaylist(@RequestParam String title, HttpSession ses) {
         User user = sessionManager.getLoggedUser(ses);
         userService.createPlaylist(title, user);
         return "You have created new playlist.";
+    }
+
+    @GetMapping("/users/user_videos")
+    public List<VideoWithoutOwnerDTO> getUserVideos(HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        return userService.getVideos(user);
+    }
+
+    @GetMapping("/users/user_playlists")
+    public List<PlaylistWithoutOwnerDTO> getUserPlaylists(HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        return userService.getPlaylists(user);
+    }
+
+
+    @PostMapping("/users/subscribe/{id}")
+    public String subscribe(@PathVariable int id, HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        return userService.subscribe(id, user);
     }
 }

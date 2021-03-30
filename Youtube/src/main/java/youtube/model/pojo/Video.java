@@ -2,6 +2,7 @@ package youtube.model.pojo;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +33,9 @@ public class Video {
     @OneToMany(mappedBy = "onVideo")
     private List<Comment> comments;
 
+    @ManyToMany(mappedBy = "videos")
+    @JsonBackReference
+    private List<Playlist> includedInPlaylists;
 
     public Video(UploadVideoDTO videoDTO){
         this.title = videoDTO.getTitle();

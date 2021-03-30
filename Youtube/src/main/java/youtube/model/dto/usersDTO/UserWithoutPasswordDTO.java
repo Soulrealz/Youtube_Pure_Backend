@@ -25,6 +25,7 @@ public class UserWithoutPasswordDTO {
     private String city;
     private List<VideoWithoutOwnerDTO> videos;
     private List<PlaylistWithoutOwnerDTO> playlists;
+    private int subscribers;
 
     public UserWithoutPasswordDTO(User user) {
         id = user.getId();
@@ -40,5 +41,7 @@ public class UserWithoutPasswordDTO {
         for(Playlist playlist : user.getPlaylists()) {
             playlists.add(new PlaylistWithoutOwnerDTO(playlist));
         }
+
+        subscribers = user.getSubscribers().size();
     }
 }

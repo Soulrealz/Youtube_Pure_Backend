@@ -17,14 +17,16 @@ public class VideoWithoutIDDTO {
     private String title;
     private LocalDateTime uploadDate;
     private String description;
-    private String path;
     private String ownerName;
+    private int likes;
+    private int dislikes;
 
     public VideoWithoutIDDTO(Video video) {
         title = video.getTitle();
         uploadDate = video.getUploadDate();
         description = video.getDescription();
-        path = video.getPath();
         ownerName = video.getOwner().getUsername();
+        likes = video.getLikedByUsers().size();
+        dislikes = video.getDislikedByUsers().size();
     }
 }

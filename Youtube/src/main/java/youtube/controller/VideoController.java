@@ -18,12 +18,6 @@ public class VideoController extends AbstractController {
     @Autowired
     private SessionManager sessionManager;
 
-    // Getting all videos with {title} name
-   // @GetMapping("/videos")
-   // public List<VideoWithoutIDDTO> getVideo(@RequestParam String title) {
-        //return videoService.getAllVideos(title);
-  //  }
-
     @GetMapping("/videos")
     public VideoWithoutIDDTO getVideoByName(@RequestParam String title) {
         return videoService.getByName(title);
@@ -45,5 +39,16 @@ public class VideoController extends AbstractController {
     public String uploadVideoFile(@RequestPart MultipartFile videoFile, @PathVariable int id, HttpSession ses){
         User user = sessionManager.getLoggedUser(ses);
         return videoService.uploadVideoFile(videoFile, id, user);
+    }
+
+
+    // PathVar - which video to like/dislike/remove like/remove dislike
+    // RequestParam - 1 = like, -1 = dislike, 0 = remove current status(if any)
+    @PostMapping("/videos/{id}")
+    public VideoWithoutIDDTO reactToVideo(@PathVariable(name = "id") int videoID, @RequestParam(name = "react") String action, HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        if (action.equals("1")) return videoService.likeVideo(user, videoID);
+        else if (action.equals("-1")) return videoService.dislikeVideo(user, videoID);
+        else return videoService.neutralStateVideo(user, videoID);
     }
 }

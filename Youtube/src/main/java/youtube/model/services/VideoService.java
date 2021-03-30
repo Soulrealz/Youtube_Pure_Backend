@@ -19,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,5 +93,61 @@ public class VideoService {
         } catch (IOException e) {
             throw new NotFoundException("There was a problem with the video.");
         }
+    }
+
+    public VideoWithoutIDDTO likeVideo(User user, int videoID) {
+        List<Video> likedVideos = user.getLikedVideos();
+
+        // Check if video exists or is liked
+        Video video = returnExistingVideo(videoRepository.findById(videoID));
+        if (likedVideos.contains(video)) {
+            throw new BadRequestException("Cannot like an already liked video");
+        }
+
+        // Remove opposite status
+        user.getDislikedVideos().remove(video);
+
+        // Add status
+        likedVideos.add(video);
+        userRepository.save(user);
+
+        return new VideoWithoutIDDTO(video);
+    }
+    public VideoWithoutIDDTO dislikeVideo(User user, int videoID) {
+        List<Video> dislikedVideos = user.getDislikedVideos();
+
+        // Check if video exists or is disliked
+        Video video = returnExistingVideo(videoRepository.findById(videoID));
+        if (dislikedVideos.contains(video)) {
+            throw new BadRequestException("Cannot dislike an already disliked video");
+        }
+
+        // Remove opposite status
+        user.getLikedVideos().remove(video);
+
+        // Add status
+        dislikedVideos.add(video);
+        userRepository.save(user);
+
+        return new VideoWithoutIDDTO(video);
+    }
+    public VideoWithoutIDDTO neutralStateVideo(User user, int videoID) {
+        // Check if video exists
+        Video video = returnExistingVideo(videoRepository.findById(videoID));
+
+        // Remove any status
+        user.getDislikedVideos().remove(video);
+        user.getLikedVideos().remove(video);
+
+        userRepository.save(user);
+
+        return new VideoWithoutIDDTO(video);
+    }
+
+    private Video returnExistingVideo(Optional<Video> video) {
+        if (video.isEmpty()) {
+            throw new NotFoundException("Comment doesn't exist");
+        }
+        else return video.get();
     }
 }

@@ -58,6 +58,24 @@ public class User {
    @JsonBackReference
    private List<User> subscribedTo;
 
+   @ManyToMany
+   @JoinTable(
+           name = "users_like_comments",
+           joinColumns = { @JoinColumn(name = "user_id")},
+           inverseJoinColumns = { @JoinColumn(name = "comment_id")}
+   )
+   @JsonManagedReference
+   private List<Comment> likedComments;
+
+   @ManyToMany
+   @JoinTable(
+           name = "users_dislike_comments",
+           joinColumns = { @JoinColumn(name = "user_id")},
+           inverseJoinColumns = { @JoinColumn(name = "comment_id")}
+   )
+   @JsonManagedReference
+   private List<Comment> dislikedComments;
+
    public User(RegisterRequestUserDTO userDTO) {
       username = userDTO.getUsername();
       email = userDTO.getEmail();

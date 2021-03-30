@@ -1,5 +1,6 @@
 package youtube.model.pojo;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -19,17 +22,26 @@ public class Comment {
     private int id;
     private String text;
     private LocalDateTime commentedOn;
-    // names cannot be userID or videoID because for some reason
-    // theres a conflict with the names for the joincolumns below
+    // names cannot be userID or videoID because theres
+    // a conflict with the names for the joincolumns below
     private int uID;
     private int vID;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User commenter;
+
     @ManyToOne
     @JoinColumn(name = "video_id")
     private Video onVideo;
+
+    @ManyToMany(mappedBy = "likedComments")
+    @JsonManagedReference
+    private List<User> likedByUsers;
+
+    @ManyToMany(mappedBy = "dislikedComments")
+    @JsonManagedReference
+    private List<User> dislikedByUsers;
 
     public Comment(String text, User user, Video video) {
         this.text = text;

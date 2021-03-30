@@ -18,9 +18,13 @@ import java.time.LocalDateTime;
 public class CommentDTO {
     private String text;
     private LocalDateTime commentedOn;
+    private int likes;
+    private int dislikes;
 
     public CommentDTO(Comment comment) {
         text = comment.getText();
         commentedOn = comment.getCommentedOn();
+        likes = comment.getLikedByUsers().size();
+        dislikes = comment.getDislikedByUsers().size();
     }
 }

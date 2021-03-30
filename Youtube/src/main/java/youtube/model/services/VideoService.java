@@ -2,6 +2,7 @@ package youtube.model.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.BadRequestException;
@@ -19,6 +20,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +37,8 @@ public class VideoService {
     private UserRepository userRepository;
     @Value("${file.path}")
     private String filePath;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
 
 
@@ -94,5 +102,33 @@ public class VideoService {
         } catch (IOException e) {
             throw new NotFoundException("There was a problem with the video.");
         }
+    }
+
+    public List<VideoWithoutIDDTO> sortByUploadDate() {
+        String sql = "SELECT v.title, v.description, v.upload_date, u.username FROM youtube.videos AS v\n" +
+                "JOIN youtube.users AS u ON (v.owner_id = u.id)\n" +
+                "ORDER BY v.upload_date DESC;";
+        List<VideoWithoutIDDTO> videos = new ArrayList<>();
+        
+        try(Connection connection = jdbcTemplate.getDataSource().getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            ResultSet resultSet =  ps.executeQuery();
+            while(resultSet.next()) {
+                VideoWithoutIDDTO video = new VideoWithoutIDDTO();
+                video.setTitle(resultSet.getString("title"));
+                video.setDescription(resultSet.getString("description"));
+                video.setUploadDate(resultSet.getTimestamp("upload_date").toLocalDateTime());
+                video.setOwnerName(resultSet.getString("username"));
+
+                videos.add(video);
+            }
+
+            return videos;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

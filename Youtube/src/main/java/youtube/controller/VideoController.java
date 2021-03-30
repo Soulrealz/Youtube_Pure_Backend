@@ -10,6 +10,7 @@ import youtube.model.pojo.User;
 import youtube.model.services.VideoService;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 public class VideoController extends AbstractController {
@@ -45,5 +46,10 @@ public class VideoController extends AbstractController {
     public String uploadVideoFile(@RequestPart MultipartFile videoFile, @PathVariable int id, HttpSession ses){
         User user = sessionManager.getLoggedUser(ses);
         return videoService.uploadVideoFile(videoFile, id, user);
+    }
+
+    @GetMapping("/videos/sort_upload_date")
+    public List<VideoWithoutIDDTO> sortByUploadDate(){
+        return videoService.sortByUploadDate();
     }
 }

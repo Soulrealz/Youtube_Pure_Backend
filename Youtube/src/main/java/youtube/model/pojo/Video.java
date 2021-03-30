@@ -37,6 +37,14 @@ public class Video {
     @JsonBackReference
     private List<Playlist> includedInPlaylists;
 
+    @ManyToMany(mappedBy = "likedVideos")
+    @JsonManagedReference
+    private List<User> likedByUsers;
+
+    @ManyToMany(mappedBy = "dislikedVideos")
+    @JsonManagedReference
+    private List<User> dislikedByUsers;
+
     public Video(UploadVideoDTO videoDTO){
         this.title = videoDTO.getTitle();
         this.description = videoDTO.getDescription();

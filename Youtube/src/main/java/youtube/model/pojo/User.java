@@ -76,6 +76,24 @@ public class User {
    @JsonManagedReference
    private List<Comment> dislikedComments;
 
+   @ManyToMany
+   @JoinTable(
+           name = "users_like_videos",
+           joinColumns = { @JoinColumn(name = "user_id")},
+           inverseJoinColumns = { @JoinColumn(name = "video_id")}
+   )
+   @JsonManagedReference
+   private List<Comment> likedVideos;
+
+   @ManyToMany
+   @JoinTable(
+           name = "users_dislike_videos",
+           joinColumns = { @JoinColumn(name = "user_id")},
+           inverseJoinColumns = { @JoinColumn(name = "video_id")}
+   )
+   @JsonManagedReference
+   private List<Comment> dislikedVideos;
+
    public User(RegisterRequestUserDTO userDTO) {
       username = userDTO.getUsername();
       email = userDTO.getEmail();

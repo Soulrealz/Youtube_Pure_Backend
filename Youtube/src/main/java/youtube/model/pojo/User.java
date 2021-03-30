@@ -45,6 +45,7 @@ public class User {
    @JsonManagedReference
    private List<Playlist> playlists;
 
+   // Subscribe relationship
    @ManyToMany
    @JoinTable(
            name = "subscriptions",
@@ -57,7 +58,9 @@ public class User {
    @ManyToMany(mappedBy = "subscribers")
    @JsonBackReference
    private List<User> subscribedTo;
+   //---------------------------------------------------------------------
 
+   // Comments like/dislike relationship
    @ManyToMany
    @JoinTable(
            name = "users_like_comments",
@@ -75,7 +78,9 @@ public class User {
    )
    @JsonManagedReference
    private List<Comment> dislikedComments;
+   //---------------------------------------------------------------------
 
+   // Videos like/dislike relationship
    @ManyToMany
    @JoinTable(
            name = "users_like_videos",
@@ -83,7 +88,7 @@ public class User {
            inverseJoinColumns = { @JoinColumn(name = "video_id")}
    )
    @JsonManagedReference
-   private List<Comment> likedVideos;
+   private List<Video> likedVideos;
 
    @ManyToMany
    @JoinTable(
@@ -92,7 +97,8 @@ public class User {
            inverseJoinColumns = { @JoinColumn(name = "video_id")}
    )
    @JsonManagedReference
-   private List<Comment> dislikedVideos;
+   private List<Video> dislikedVideos;
+   //---------------------------------------------------------------------
 
    public User(RegisterRequestUserDTO userDTO) {
       username = userDTO.getUsername();

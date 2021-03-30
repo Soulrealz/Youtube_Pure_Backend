@@ -11,9 +11,9 @@ import youtube.model.pojo.Video;
 import youtube.model.repository.CommentRepository;
 import youtube.model.repository.VideoRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommentService {
@@ -22,37 +22,36 @@ public class CommentService {
     @Autowired
     private VideoRepository videoRepository;
 
-    public CommentDTO makeComment(String title, String text, User u) {
-        Video v = videoRepository.findByTitle(title);
-        if (v == null) {
+    public CommentDTO makeComment(String title, String text, User user) {
+        Video video = videoRepository.findByTitle(title);
+        if (video == null) {
             throw new NotFoundException("Cannot comment on nonexistent video");
         }
 
-        Comment comment = new Comment(text, u, v);
+        Comment comment = new Comment(text, user, video);
         commentRepository.save(comment);
         return new CommentDTO(comment);
     }
     public List<CommentDTO> getComments(String vidName) {
-        Video v = videoRepository.findByTitle(vidName);
-        if (v == null) {
+        Video video = videoRepository.findByTitle(vidName);
+        if (video == null) {
             throw new NotFoundException("No such video.");
         }
 
         List<CommentDTO> ls = new ArrayList<>();
-        for (Comment c : v.getComments()) {
-            ls.add(new CommentDTO(c));
+        for (Comment comment : video.getComments()) {
+            ls.add(new CommentDTO(comment));
         }
-
         return ls;
     }
-    public CommentDTO editComment(User u, String text, String commentId) {
+    public CommentDTO editComment(User user, String text, String commentId) {
         // Checking if comment that was selected for editing
         // was made by current logged in user
         boolean isMadeByUser = false;
-        int cID = Integer.parseInt(commentId);
-        var v = u.getComments();
-        for (Comment c : v) {
-            if (c.getId() == cID) {
+        int commentID = Integer.parseInt(commentId);
+        List<Comment> listComments = user.getComments();
+        for (Comment comment : listComments) {
+            if (comment.getId() == commentID) {
                 isMadeByUser = true;
                 break;
             }
@@ -63,20 +62,20 @@ public class CommentService {
         }
 
         // Editing and updating in db
-        Comment c = commentRepository.findById(cID).get();
-        c.setText(text);
-        commentRepository.save(c);
-        return new CommentDTO(c);
+        Comment comment = commentRepository.findById(commentID).get();
+        comment.setText(text);
+        commentRepository.save(comment);
+        return new CommentDTO(comment);
     }
-    public void deleteComment(User u, String id) {
-        var v = commentRepository.findById(Integer.parseInt(id));
-        if (v.isEmpty()) {
+    public void deleteComment(User user, String id) {
+        Optional<Comment> comment = commentRepository.findById(Integer.parseInt(id));
+        if (comment.isEmpty()) {
             throw new NotFoundException("Cannot delete nonexistent comment");
         }
 
         boolean isCommentByCurrUser = false;
-        for (Comment c : u.getComments()) {
-            if (c.getId() == v.get().getId()) {
+        for (Comment comm : user.getComments()) {
+            if (comm.getId() == comment.get().getId()) {
                 isCommentByCurrUser = true;
                 break;
             }
@@ -86,6 +85,6 @@ public class CommentService {
             throw new AuthenticationException("Cannot delete comment that was not made by you");
         }
 
-        commentRepository.delete(v.get());
+        commentRepository.delete(comment.get());
     }
 }

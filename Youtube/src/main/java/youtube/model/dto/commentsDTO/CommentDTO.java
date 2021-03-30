@@ -19,8 +19,8 @@ public class CommentDTO {
     private String text;
     private LocalDateTime commentedOn;
 
-    public CommentDTO(Comment c) {
-        text = c.getText();
-        commentedOn = c.getCommentedOn();
+    public CommentDTO(Comment comment) {
+        text = comment.getText();
+        commentedOn = comment.getCommentedOn();
     }
 }

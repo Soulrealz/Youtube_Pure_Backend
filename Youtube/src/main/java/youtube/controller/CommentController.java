@@ -17,30 +17,37 @@ public class CommentController extends AbstractController {
     private SessionManager sessionManager;
 
     // Making comments on X video
-    @PutMapping("/videos")
+    // RequestParam - video
+    // RequestBody - comment text
+    @PutMapping("/videos/comments")
     public CommentDTO makeComment(@RequestParam String name, @RequestBody String text, HttpSession ses) {
-        User u = sessionManager.getLoggedUser(ses);
-        return commentService.makeComment(name, text, u);
+        User User = sessionManager.getLoggedUser(ses);
+        return commentService.makeComment(name, text, User);
     }
 
     // Editing X comment
-    @PostMapping("/videos/comment/{id}")
+    // PathVar - which comment to edit
+    // RequestBody - new comment text
+    @PostMapping("/videos/comments/{id}")
     public CommentDTO editComment(@PathVariable(name = "id") String commentId, @RequestBody String text, HttpSession ses) {
-        User u = sessionManager.getLoggedUser(ses);
-        return commentService.editComment(u, text, commentId);
+        User user = sessionManager.getLoggedUser(ses);
+        return commentService.editComment(user, text, commentId);
     }
 
     // Showing all comments on X video
-    @GetMapping("/video/comments")
+    // RequestParam - which video
+    @GetMapping("/videos/comments")
     public List<CommentDTO> showComments(@RequestParam(name = "name") String name) {
         return commentService.getComments(name);
     }
 
+    // Return other type with more information
     // Deleting X comment on Y video
-    @DeleteMapping("/comments/{id}")
+    // PathVar - which comment to delete
+    @DeleteMapping("/videos/comments/{id}")
     public String deleteComment(@PathVariable(name = "id") String id, HttpSession ses) {
-        User u = sessionManager.getLoggedUser(ses);
-        commentService.deleteComment(u, id);
+        User user = sessionManager.getLoggedUser(ses);
+        commentService.deleteComment(user, id);
         return "Deleted comment";
     }
 

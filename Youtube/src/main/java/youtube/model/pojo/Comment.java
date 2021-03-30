@@ -31,12 +31,12 @@ public class Comment {
     @JoinColumn(name = "video_id")
     private Video onVideo;
 
-    public Comment(String text, User u, Video v) {
+    public Comment(String text, User user, Video video) {
         this.text = text;
-        commenter = u;
-        onVideo = v;
-        uID = u.getId();
-        vID = v.getId();
+        commenter = user;
+        onVideo = video;
+        uID = user.getId();
+        vID = video.getId();
         commentedOn = LocalDateTime.now();
     }
 

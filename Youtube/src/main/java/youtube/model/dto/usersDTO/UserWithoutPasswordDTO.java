@@ -34,11 +34,11 @@ public class UserWithoutPasswordDTO {
         city = user.getCity();
         videos = new ArrayList<>();
         playlists = new ArrayList<>();
-        for(Video v : user.getVideos()) {
-            videos.add(new VideoWithoutOwnerDTO(v));
+        for(Video video : user.getVideos()) {
+            videos.add(new VideoWithoutOwnerDTO(video));
         }
-        for(Playlist p : user.getPlaylists()) {
-            playlists.add(new PlaylistWithoutOwnerDTO(p));
+        for(Playlist playlist : user.getPlaylists()) {
+            playlists.add(new PlaylistWithoutOwnerDTO(playlist));
         }
     }
 }

@@ -54,11 +54,11 @@ public class CommentController extends AbstractController {
         return "Deleted comment";
     }
 
-    
+
     // PathVar - which comment to like/dislike/remove like/remove dislike
     // RequestParam - 1 = like, -1 = dislike, 0 = remove current status(if any)
     @PostMapping("/comments/{id}")
-    public CommentDTO likeComment(@PathVariable(name = "id") int commentID, @RequestParam(name = "status") String action, HttpSession ses) {
+    public CommentDTO likeComment(@PathVariable(name = "id") int commentID, @RequestParam(name = "react") String action, HttpSession ses) {
         User user = sessionManager.getLoggedUser(ses);
         if (action.equals("1")) return commentService.likeComment(user, commentID);
         else if (action.equals("-1")) return commentService.dislikeComment(user, commentID);

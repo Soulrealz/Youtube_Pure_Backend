@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
+import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikes;
 import youtube.model.dto.videosDTO.VideoWithoutIDDTO;
 import youtube.model.pojo.User;
 import youtube.model.services.VideoService;
@@ -42,6 +43,7 @@ public class VideoController extends AbstractController {
         return videoService.uploadVideoFile(videoFile, id, user);
     }
 
+
     // PathVar - which video to like/dislike/remove like/remove dislike
     // RequestParam - 1 = like, -1 = dislike, 0 = remove current status(if any)
     @PostMapping("/videos/{id}")
@@ -55,5 +57,13 @@ public class VideoController extends AbstractController {
     @GetMapping("/videos/sort_upload_date")
     public List<VideoWithoutIDDTO> sortByUploadDate(){
         return videoService.sortByUploadDate();
+    }
+
+
+    // RequestParam limit = how many to show
+    // RequestParam offset = how many to skip (paging)
+    @GetMapping("/videos/sort_by_likes")
+    public List<VideoWithoutIDAndDislikes> sortByLikes(@RequestParam(name = "limit") int limit, @RequestParam(name = "offset") int offset) {
+        return videoService.sortByLikes(limit, offset);
     }
 }

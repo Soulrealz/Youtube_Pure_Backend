@@ -9,6 +9,7 @@ import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
+import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikes;
 import youtube.model.dto.videosDTO.VideoWithoutIDDTO;
 import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
@@ -37,7 +38,7 @@ public class VideoService {
     @Value("${file.path}")
     private String filePath;
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
 
     public VideoWithoutIDDTO getByName(String title) {
@@ -48,7 +49,6 @@ public class VideoService {
         Video video = videoRepository.findByTitle(title);
         return new VideoWithoutIDDTO(video);
     }
-
     public UserWithoutPasswordDTO createVideo(UploadVideoDTO videoDTO, User user) {
         if (videoRepository.findByTitle(videoDTO.getTitle()) != null) {
             throw new BadRequestException("This video title is already used.");
@@ -59,7 +59,6 @@ public class VideoService {
         video = videoRepository.save(video);
         return new UserWithoutPasswordDTO(userRepository.findByUsername(user.getUsername()));
     }
-
     public String uploadVideoFile(MultipartFile videoFile, int id, User user) {
         Optional<Video> video = videoRepository.findById(id);
         if (video.isEmpty()) {
@@ -86,7 +85,6 @@ public class VideoService {
         videoRepository.save(video.get());
         return "You have successfully added a media file to your video";
     }
-
     public byte[] getMedia(int id) {
         Optional<Video> video = videoRepository.findById(id);
 
@@ -120,7 +118,6 @@ public class VideoService {
 
         return new VideoWithoutIDDTO(video);
     }
-
     public VideoWithoutIDDTO dislikeVideo(User user, int videoID) {
         List<Video> dislikedVideos = user.getDislikedVideos();
 
@@ -139,7 +136,6 @@ public class VideoService {
 
         return new VideoWithoutIDDTO(video);
     }
-
     public VideoWithoutIDDTO neutralStateVideo(User user, int videoID) {
         // Check if video exists
         Video video = returnExistingVideo(videoRepository.findById(videoID));
@@ -152,7 +148,6 @@ public class VideoService {
 
         return new VideoWithoutIDDTO(video);
     }
-
     private Video returnExistingVideo(Optional<Video> video) {
         if (video.isEmpty()) {
             throw new NotFoundException("Comment doesn't exist");
@@ -184,6 +179,33 @@ public class VideoService {
             e.printStackTrace();
         }
 
+        return null;
+    }
+    public List<VideoWithoutIDAndDislikes> sortByLikes(int limit, int offset) {
+        String sql = VideoWithoutIDAndDislikes.selectVideosAndSortByLikes;
+        List<VideoWithoutIDAndDislikes> videos = new ArrayList<>();
+
+        try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                VideoWithoutIDAndDislikes video = new VideoWithoutIDAndDislikes();
+                video.setTitle(rs.getString("title"));
+                video.setUploadDate(rs.getTimestamp("upload_date").toLocalDateTime());
+                video.setDescription(rs.getString("description"));
+                video.setOwnerName(rs.getString("username"));
+                video.setLikes(rs.getInt("likes"));
+
+                videos.add(video);
+            }
+
+            return videos;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         return null;
     }
 }

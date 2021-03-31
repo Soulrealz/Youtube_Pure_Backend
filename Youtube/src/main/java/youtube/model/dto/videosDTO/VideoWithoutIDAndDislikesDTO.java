@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @Component
 @NoArgsConstructor
-public class VideoWithoutIDAndDislikes {
+public class VideoWithoutIDAndDislikesDTO {
     private String title;
     private LocalDateTime uploadDate;
     private String description;
@@ -29,7 +29,7 @@ public class VideoWithoutIDAndDislikes {
             "LIMIT ?\n" +
             "OFFSET ?;";
 
-    public VideoWithoutIDAndDislikes(Video video) {
+    public VideoWithoutIDAndDislikesDTO(Video video) {
         title = video.getTitle();
         uploadDate = video.getUploadDate();
         description = video.getDescription();

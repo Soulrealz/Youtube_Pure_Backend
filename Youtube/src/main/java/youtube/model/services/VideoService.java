@@ -9,7 +9,7 @@ import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
-import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikes;
+import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikesDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDDTO;
 import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
@@ -181,9 +181,9 @@ public class VideoService {
 
         return null;
     }
-    public List<VideoWithoutIDAndDislikes> sortByLikes(int limit, int offset) {
-        String sql = VideoWithoutIDAndDislikes.selectVideosAndSortByLikes;
-        List<VideoWithoutIDAndDislikes> videos = new ArrayList<>();
+    public List<VideoWithoutIDAndDislikesDTO> sortByLikes(int limit, int offset) {
+        String sql = VideoWithoutIDAndDislikesDTO.selectVideosAndSortByLikes;
+        List<VideoWithoutIDAndDislikesDTO> videos = new ArrayList<>();
 
         try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -192,7 +192,7 @@ public class VideoService {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                VideoWithoutIDAndDislikes video = new VideoWithoutIDAndDislikes();
+                VideoWithoutIDAndDislikesDTO video = new VideoWithoutIDAndDislikesDTO();
                 video.setTitle(rs.getString("title"));
                 video.setUploadDate(rs.getTimestamp("upload_date").toLocalDateTime());
                 video.setDescription(rs.getString("description"));

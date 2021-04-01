@@ -22,6 +22,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +49,7 @@ public class VideoService {
         Video video = videoRepository.findByTitle(title);
         return new VideoWithoutIDDTO(video);
     }
+
     public UserWithoutPasswordDTO createVideo(UploadVideoDTO videoDTO, User user) {
         if (videoRepository.findByTitle(videoDTO.getTitle()) != null) {
             throw new BadRequestException("This video title is already used.");
@@ -159,6 +164,7 @@ public class VideoService {
 
         return returnedVideos;
     }
+
     public List<VideoWithoutIDAndDislikesDTO> sortByLikes(int limit, int offset) {
         String sql = VideoWithoutIDAndDislikesDTO.selectVideosAndSortByLikes;
         List<VideoWithoutIDAndDislikesDTO> videos = new ArrayList<>();
@@ -185,5 +191,20 @@ public class VideoService {
             throwables.printStackTrace();
         }
         return null;
+    }
+
+    public UserWithoutPasswordDTO deleteVideo(int id, User user) {
+        Optional<Video> video = videoRepository.findById(id);
+
+        if (video.isEmpty()) {
+            throw new NotFoundException("This video doesn't exist.");
+        }
+
+        if (video.get().getOwner() != user) {
+            throw new BadRequestException("You can't delete someone else's video.");
+        }
+
+        videoRepository.delete(video.get());
+        return new UserWithoutPasswordDTO(userRepository.findByUsername(user.getUsername()));
     }
 }

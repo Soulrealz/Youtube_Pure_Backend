@@ -77,4 +77,10 @@ public class UserController extends AbstractController {
         User user = sessionManager.getLoggedUser(ses);
         return userService.subscribe(id, user);
     }
+
+    @PostMapping("/users/unsubscribe/{id}")
+    public String unsubscribe(@PathVariable int id, HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        return userService.unsubscribe(id, user);
+    }
 }

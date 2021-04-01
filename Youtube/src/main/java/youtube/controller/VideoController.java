@@ -30,7 +30,7 @@ public class VideoController extends AbstractController {
        return videoService.getMedia(id);
     }
 
-    @PutMapping("/videos/create_video")
+    @PutMapping("/videos")
     public UserWithoutPasswordDTO createVideo( @RequestBody UploadVideoDTO videoDTO, HttpSession ses) {
         User user = sessionManager.getLoggedUser(ses);
         return videoService.createVideo(videoDTO, user);
@@ -58,11 +58,16 @@ public class VideoController extends AbstractController {
         return videoService.orderByUploadDate(id);
     }
 
-
     // RequestParam limit = how many to show
     // RequestParam offset = how many to skip (paging)
     @GetMapping("/videos/sort_by_likes")
     public List<VideoWithoutIDAndDislikesDTO> sortByLikes(@RequestParam(name = "limit") int limit, @RequestParam(name = "offset") int offset) {
         return videoService.sortByLikes(limit, offset);
+    }
+
+    @DeleteMapping("/videos/{id}")
+    public UserWithoutPasswordDTO deleteVideo(@PathVariable int id, HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        return videoService.deleteVideo(id, user);
     }
 }

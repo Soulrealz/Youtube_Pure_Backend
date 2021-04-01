@@ -1,6 +1,7 @@
 package youtube.model.services;
 
 
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import youtube.exceptions.BadRequestException;
@@ -12,8 +13,10 @@ import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
 import youtube.model.repository.PlaylistRepository;
 import youtube.model.repository.VideoRepository;
+import youtube.model.validations.PlaylistValidator;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class PlaylistService {
@@ -45,14 +48,8 @@ public class PlaylistService {
     }
 
     public PlaylistWithoutOwnerDTO addVideo(User user, int id, String title) {
-        Playlist currentPlaylist = playlistRepository.findById(id);
-        if(currentPlaylist == null) {
-            throw new NotFoundException("This playlist doesn't exist.");
-        }
-
-        if(currentPlaylist.getOwner() != user) {
-            throw new BadRequestException("You can't edit someone else's playlist.");
-        }
+        Optional<Playlist> currentPlaylist = playlistRepository.findById(id);
+        PlaylistValidator.validate(currentPlaylist, user);
 
         Video video = videoRepository.findByTitle(title);
 
@@ -60,12 +57,46 @@ public class PlaylistService {
             throw new BadRequestException("The video, you want to add, doesn't exist.");
         }
 
-        if(currentPlaylist.getVideos().contains(video)) {
+        if(currentPlaylist.get().getVideos().contains(video)) {
             throw new BadRequestException("This playlist already contains this video.");
         }
 
-        currentPlaylist.getVideos().add(video);
-        playlistRepository.save(currentPlaylist);
-        return new PlaylistWithoutOwnerDTO(playlistRepository.findByTitle(currentPlaylist.getTitle()));
+        currentPlaylist.get().getVideos().add(video);
+        playlistRepository.save(currentPlaylist.get());
+        return new PlaylistWithoutOwnerDTO(playlistRepository.findByTitle(currentPlaylist.get().getTitle()));
+    }
+
+    public PlaylistWithoutOwnerDTO removeVideo(User user, int id, String title) {
+        Optional<Playlist> currentPlaylist = playlistRepository.findById(id);
+        PlaylistValidator.validate(currentPlaylist, user);
+
+        Video video = videoRepository.findByTitle(title);
+
+        if(video == null) {
+            throw new BadRequestException("The video, you want to add, doesn't exist.");
+        }
+
+        if(!currentPlaylist.get().getVideos().contains(video)) {
+            throw new BadRequestException("This playlist already doesn't contain this video.");
+        }
+
+        currentPlaylist.get().getVideos().remove(video);
+        playlistRepository.save(currentPlaylist.get());
+        return new PlaylistWithoutOwnerDTO(playlistRepository.findByTitle(currentPlaylist.get().getTitle()));
+    }
+
+    public String deletePlaylist(int id, User user) {
+        Optional<Playlist> playlist = playlistRepository.findById(id);
+
+        if(playlist.isEmpty()) {
+            throw new NotFoundException("This playlist doesn't exist.");
+        }
+
+        if(playlist.get().getOwner() != user) {
+            throw new BadRequestException("You can't delete someone else's playlist.");
+        }
+
+        playlistRepository.delete(playlist.get());
+        return "You have successfully deleted " + playlist.get().getTitle() + " playlist.";
     }
 }

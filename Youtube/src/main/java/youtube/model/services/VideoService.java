@@ -164,4 +164,19 @@ public class VideoService {
 
         return returnedVideos;
     }
+
+    public UserWithoutPasswordDTO deleteVideo(int id, User user) {
+        Optional<Video> video = videoRepository.findById(id);
+
+        if(video.isEmpty()) {
+            throw new NotFoundException("This video doesn't exist.");
+        }
+
+        if(video.get().getOwner() != user) {
+            throw new BadRequestException("You can't delete someone else's video.");
+        }
+
+        videoRepository.delete(video.get());
+        return new UserWithoutPasswordDTO(userRepository.findByUsername(user.getUsername()));
+    }
 }

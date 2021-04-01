@@ -28,10 +28,22 @@ public class PlaylistController extends AbstractController {
         return playlistService.addVideo(user, id, title);
     }
 
+    @PostMapping("/playlists/remove_video/{id}")
+    public PlaylistWithoutOwnerDTO removeVideoFromPlaylist(@RequestBody String title, @PathVariable int id, HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        return playlistService.removeVideo(user, id, title);
+    }
+
     @PutMapping("/playlists/create_playlist")
     public String createPlaylist(@RequestParam String title, HttpSession ses) {
         User user = sessionManager.getLoggedUser(ses);
         playlistService.createPlaylist(title, user);
         return "You have created new playlist.";
+    }
+
+    @DeleteMapping("/playlists/{id}")
+    public String deletePlaylist(@PathVariable int id, HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        return playlistService.deletePlaylist(id, user);
     }
 }

@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -129,18 +130,42 @@ public class UserService {
     }
 
     public String subscribe(int id, User user) {
-        User subscribeToUser = userRepository.findById(id).get();
+        Optional<User> subscribeToUser = userRepository.findById(id);
 
-        if(subscribeToUser == null) {
+        if(subscribeToUser.isEmpty()) {
             throw new NotFoundException("The user you want to subscribe to doesn't exist");
         }
 
-        if(subscribeToUser.getSubscribers().contains(user)) {
+        if(subscribeToUser.get() == user) {
+            throw new BadRequestException("You can't subscribe to yourself.");
+        }
+
+        if(subscribeToUser.get().getSubscribers().contains(user)) {
             throw new BadRequestException("You are already subscribed to this user.");
         }
 
-        subscribeToUser.getSubscribers().add(user);
-        userRepository.save(subscribeToUser);
-        return "You have successfully subscribed to " + subscribeToUser.getUsername();
+        subscribeToUser.get().getSubscribers().add(user);
+        userRepository.save(subscribeToUser.get());
+        return "You have successfully subscribed to " + subscribeToUser.get().getUsername();
+    }
+
+    public String unsubscribe(int id, User user) {
+        Optional<User> unsubscribeToUser = userRepository.findById(id);
+
+        if(unsubscribeToUser.isEmpty()) {
+            throw new NotFoundException("The user you want to unsubscribe to doesn't exist");
+        }
+
+        if(unsubscribeToUser.get() == user) {
+            throw new BadRequestException("You can't unsubscribe to yourself.");
+        }
+
+        if(!unsubscribeToUser.get().getSubscribers().contains(user)) {
+            throw new BadRequestException("You are already not subscribed to this user.");
+        }
+
+        unsubscribeToUser.get().getSubscribers().remove(user);
+        userRepository.save(unsubscribeToUser.get());
+        return "You have successfully unsubscribed to " + unsubscribeToUser.get().getUsername();
     }
 }

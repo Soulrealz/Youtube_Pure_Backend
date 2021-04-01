@@ -29,7 +29,7 @@ public class VideoController extends AbstractController {
        return videoService.getMedia(id);
     }
 
-    @PutMapping("/videos/create_video")
+    @PutMapping("/videos")
     public UserWithoutPasswordDTO createVideo( @RequestBody UploadVideoDTO videoDTO, HttpSession ses) {
         User user = sessionManager.getLoggedUser(ses);
         return videoService.createVideo(videoDTO, user);
@@ -54,5 +54,11 @@ public class VideoController extends AbstractController {
     @GetMapping("/videos/order_upload_date/{id}")
     public List<VideoWithoutIDDTO> orderByUploadDate(@PathVariable int id){
         return videoService.orderByUploadDate(id);
+    }
+
+    @DeleteMapping("/videos/{id}")
+    public UserWithoutPasswordDTO deleteVideo(@PathVariable int id, HttpSession ses) {
+        User user = sessionManager.getLoggedUser(ses);
+        return videoService.deleteVideo(id, user);
     }
 }

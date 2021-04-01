@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
+import youtube.model.dao.VideoDbDAO;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDDTO;
@@ -20,10 +21,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +35,6 @@ public class VideoService {
     private String filePath;
     @Autowired
     JdbcTemplate jdbcTemplate;
-
 
     public VideoWithoutIDDTO getByName(String title) {
         if (videoRepository.findByTitle(title) == null) {
@@ -159,31 +155,13 @@ public class VideoService {
         } else return video.get();
     }
 
-    public List<VideoWithoutIDDTO> sortByUploadDate() {
-        String sql = "SELECT v.title, v.description, v.upload_date, u.username FROM youtube.videos AS v\n" +
-                "JOIN youtube.users AS u ON (v.owner_id = u.id)\n" +
-                "ORDER BY v.upload_date DESC;";
-        List<VideoWithoutIDDTO> videos = new ArrayList<>();
-
-        try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(sql);
-
-            ResultSet resultSet = ps.executeQuery();
-            while (resultSet.next()) {
-                VideoWithoutIDDTO video = new VideoWithoutIDDTO();
-                video.setTitle(resultSet.getString("title"));
-                video.setDescription(resultSet.getString("description"));
-                video.setUploadDate(resultSet.getTimestamp("upload_date").toLocalDateTime());
-                video.setOwnerName(resultSet.getString("username"));
-
-                videos.add(video);
-            }
-
-            return videos;
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public List<VideoWithoutIDDTO> orderByUploadDate(int id) {
+        List<Video> videos = videoRepository.findAllByIdGreaterThanOrderByUploadDate(id);
+        List<VideoWithoutIDDTO> returnedVideos = new ArrayList<>();
+        for(Video video: videos) {
+            returnedVideos.add(new VideoWithoutIDDTO(video));
         }
 
-        return null;
+        return returnedVideos;
     }
 }

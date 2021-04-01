@@ -26,7 +26,6 @@ public class VideoController extends AbstractController {
 
     @GetMapping(value = "/videos/media/{id}", produces = "video/mp4")
     public byte[] getMediaOfVideo(@PathVariable int id) {
-        System.out.println("kur");
        return videoService.getMedia(id);
     }
 
@@ -52,8 +51,8 @@ public class VideoController extends AbstractController {
         else return videoService.neutralStateVideo(user, videoID);
     }
 
-    @GetMapping("/videos/sort_upload_date")
-    public List<VideoWithoutIDDTO> sortByUploadDate(){
-        return videoService.sortByUploadDate();
+    @GetMapping("/videos/order_upload_date/{id}")
+    public List<VideoWithoutIDDTO> orderByUploadDate(@PathVariable int id){
+        return videoService.orderByUploadDate(id);
     }
 }

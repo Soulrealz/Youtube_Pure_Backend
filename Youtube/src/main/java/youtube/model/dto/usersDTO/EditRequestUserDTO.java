@@ -1,11 +1,8 @@
 package youtube.model.dto.usersDTO;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-import youtube.exceptions.BadRequestException;
-import youtube.model.validations.UserValidation;
 
 @Component
 @Setter

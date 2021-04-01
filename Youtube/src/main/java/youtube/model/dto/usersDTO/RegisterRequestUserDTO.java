@@ -1,15 +1,13 @@
 package youtube.model.dto.usersDTO;
 
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import youtube.exceptions.BadRequestException;
-import youtube.model.validations.UserValidation;
+import youtube.model.validations.UserValidator;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Setter
@@ -28,22 +26,22 @@ public class RegisterRequestUserDTO {
 
     public void validateUserInformation(){
         //checking if the email format is correct
-        if(!UserValidation.validateEmail(email)) {
+        if(!UserValidator.validateEmail(email)) {
             throw new BadRequestException("You have entered invalid email.");
         }
 
         //checking if the entered confirmation password is correct
-        if(!UserValidation.validatePasswordConfirmation(password, confirmPassword)) {
+        if(!UserValidator.validatePasswordConfirmation(password, confirmPassword)) {
             throw new BadRequestException("Passwords do not match.");
         }
 
         //check if the entered city is correct
-        if(!UserValidation.validateCity(city)) {
+        if(!UserValidator.validateCity(city)) {
             throw new BadRequestException("You have entered invalid city.");
         }
 
         //check if the entered age are correct
-        if(!UserValidation.validateAge(age)) {
+        if(!UserValidator.validateAge(age)) {
             throw new BadRequestException("You have entered invalid age.");
         }
     }

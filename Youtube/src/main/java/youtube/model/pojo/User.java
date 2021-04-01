@@ -11,11 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import youtube.exceptions.BadRequestException;
 import youtube.model.dto.usersDTO.EditRequestUserDTO;
 import youtube.model.dto.usersDTO.RegisterRequestUserDTO;
-import youtube.model.validations.UserValidation;
+import youtube.model.validations.UserValidator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -112,25 +111,25 @@ public class User {
    //method used for editing user profile
    public void editUser(EditRequestUserDTO userDTO){
       if(userDTO.getEmail() != null) {
-         if(!UserValidation.validateEmail(email)) {
+         if(!UserValidator.validateEmail(email)) {
             throw new BadRequestException("You have entered invalid email.");
          }
          email = userDTO.getEmail();
       }
       if(userDTO.getAge() != 0) {
-         if(!UserValidation.validateAge(age)) {
+         if(!UserValidator.validateAge(age)) {
             throw new BadRequestException("You have entered invalid age.");
          }
          age = userDTO.getAge();
       }
       if(userDTO.getCity() != null) {
-         if(!UserValidation.validateCity(city)) {
+         if(!UserValidator.validateCity(city)) {
             throw new BadRequestException("You have entered invalid city.");
          }
          city = userDTO.getCity();
       }
       if(userDTO.getPassword() != null && userDTO.getConfirmPassword() != null) {
-         if(!UserValidation.validatePasswordConfirmation(userDTO.getPassword(), userDTO.getConfirmPassword())) {
+         if(!UserValidator.validatePasswordConfirmation(userDTO.getPassword(), userDTO.getConfirmPassword())) {
             throw new BadRequestException("Passwords do not match.");
          }
 

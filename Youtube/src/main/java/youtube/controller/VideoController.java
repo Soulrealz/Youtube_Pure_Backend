@@ -72,4 +72,9 @@ public class VideoController extends AbstractController {
         User user = sessionManager.getLoggedUser(ses);
         return videoService.deleteVideo(id, user);
     }
+
+    @GetMapping("/videos/views/{id}")
+    public String getViews(@PathVariable int id){
+        return videoService.getViews(id);
+    }
 }

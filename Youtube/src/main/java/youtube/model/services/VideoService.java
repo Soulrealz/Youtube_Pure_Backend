@@ -1,5 +1,6 @@
 package youtube.model.services;
 
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -224,5 +225,16 @@ public class VideoService {
 
         videoRepository.delete(video.get());
         return new UserWithoutPasswordDTO(userRepository.findByUsername(user.getUsername()));
+    }
+
+    public String getViews(int id) {
+        Optional<Video> video = videoRepository.findById(id);
+
+        if(video.isEmpty()) {
+            throw new NotFoundException("This video doesn't exist.");
+        }
+
+        List<HistoryRecord> currentRecord =  historyRecordRepository.findAllByWatchedVideo(video.get());
+        return "This video has " + currentRecord.size() + " views.";
     }
 }

@@ -99,15 +99,6 @@ public class User {
    private List<Video> dislikedVideos;
    //---------------------------------------------------------------------
 
-   // Watched videos relationship
-   @ManyToMany
-   @JoinTable(
-           name = "history",
-           joinColumns = { @JoinColumn(name = "user_id")},
-           inverseJoinColumns = { @JoinColumn(name = "video_id")}
-   )
-   @JsonManagedReference
-   private List<Video> watchedVideos;
 
 
    public User(RegisterRequestUserDTO userDTO) {

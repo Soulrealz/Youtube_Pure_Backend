@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
-import youtube.model.dao.VideoDbDAO;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikesDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDDTO;
+import youtube.model.pojo.HistoryRecord;
 import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
+import youtube.model.repository.HistoryRecordRepository;
 import youtube.model.repository.UserRepository;
 import youtube.model.repository.VideoRepository;
 
@@ -26,6 +27,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +42,8 @@ public class VideoService {
     private String filePath;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private HistoryRecordRepository historyRecordRepository;
 
     public VideoWithoutIDDTO getByName(String title) {
         if (videoRepository.findByTitle(title) == null) {
@@ -86,12 +90,26 @@ public class VideoService {
         videoRepository.save(video.get());
         return "You have successfully added a media file to your video";
     }
-    public byte[] getMedia(int id) {
+    public byte[] getMedia(int id, User user) {
         Optional<Video> video = videoRepository.findById(id);
 
         if (video.isEmpty()) {
             throw new NotFoundException("The video you want to watch doesn't exist.");
         }
+
+        if(user != null) {
+            HistoryRecord historyRecord = new HistoryRecord();
+            historyRecord.setWatchedBy(user);
+            historyRecord.setWatchedVideo(video.get());
+            historyRecord.setViewDate(LocalDateTime.now());
+
+            historyRecordRepository.save(historyRecord);
+        }
+
+        if(video.get().getPath() == null) {
+            throw new NotFoundException("This video doesn't have media file.");
+        }
+
         String path = video.get().getPath();
         File pFile = new File(path);
         try {

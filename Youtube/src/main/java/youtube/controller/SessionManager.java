@@ -6,6 +6,7 @@ import youtube.exceptions.AuthenticationException;
 import youtube.model.pojo.User;
 import youtube.model.repository.UserRepository;
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @Component
 public class SessionManager {
@@ -22,6 +23,15 @@ public class SessionManager {
             int userId = (int) session.getAttribute(LOGGED_USER_ID);
             return repository.findById(userId).get();
         }
+    }
+
+    public User checkIfThereIsLoggedUser(HttpSession session) {
+        if(session.getAttribute(LOGGED_USER_ID) != null){
+            int userId = (int) session.getAttribute(LOGGED_USER_ID);
+            Optional<User> user = repository.findById(userId);
+            return user.get();
+        }
+        return null;
     }
 
     public void loginUser(HttpSession ses, int id) {

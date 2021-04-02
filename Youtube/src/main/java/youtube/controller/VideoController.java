@@ -26,8 +26,10 @@ public class VideoController extends AbstractController {
     }
 
     @GetMapping(value = "/videos/media/{id}", produces = "video/mp4")
-    public byte[] getMediaOfVideo(@PathVariable int id) {
-       return videoService.getMedia(id);
+    public byte[] getMediaOfVideo(@PathVariable int id, HttpSession ses) {
+        // Checking if there is logged user, so if there is we can add data to history table
+        User user = sessionManager.checkIfThereIsLoggedUser(ses);
+        return videoService.getMedia(id, user);
     }
 
     @PutMapping("/videos")

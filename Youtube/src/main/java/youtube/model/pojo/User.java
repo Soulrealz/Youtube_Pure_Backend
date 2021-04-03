@@ -32,6 +32,7 @@ public class User {
    private String password;
    private String city;
    private LocalDateTime registerDate;
+   private Boolean verified = false;
 
    @OneToMany(mappedBy = "owner")
    @JsonManagedReference

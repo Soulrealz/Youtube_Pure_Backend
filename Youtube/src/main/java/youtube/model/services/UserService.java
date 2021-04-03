@@ -38,22 +38,24 @@ public class UserService {
     private VideoRepository videoRepository;
     @Autowired
     private PlaylistRepository playlistRepository;
+    @Autowired
+    private EmailService emailService;
 
     public RegisterResponseUserDTO register(RegisterRequestUserDTO userDTO){
-        //check if there is already user with this email
+        // Check if there is already user with this email
         if(userRepository.findByEmail(userDTO.getEmail()) != null) {
             throw new BadRequestException("User with this email already exists.");
         }
 
-        //check if there is already user with this username
+        // Check if there is already user with this username
         if(userRepository.findByUsername(userDTO.getUsername()) != null) {
             throw new BadRequestException("This username is already taken.");
         }
 
-        //validate all users information
+        // Validate all users information
         userDTO.validateUserInformation();
 
-        //encode the password
+        // Encode the password
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         userDTO.setPassword(encoder.encode(userDTO.getPassword()));
 
@@ -61,6 +63,7 @@ public class UserService {
         user.setRegisterDate(LocalDateTime.now());
         user = userRepository.save(user);
 
+        emailService.sendEmail(user.getEmail());
         return new RegisterResponseUserDTO(user);
     }
 
@@ -167,5 +170,10 @@ public class UserService {
         unsubscribeToUser.get().getSubscribers().remove(user);
         userRepository.save(unsubscribeToUser.get());
         return "You have successfully unsubscribed to " + unsubscribeToUser.get().getUsername();
+    }
+
+    public void verifyEmail(String token, User user) {
+        user.setVerified(true);
+        userRepository.save(user);
     }
 }

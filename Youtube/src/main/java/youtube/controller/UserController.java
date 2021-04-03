@@ -3,10 +3,8 @@ package youtube.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.dto.usersDTO.*;
-import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.dto.videosDTO.VideoWithoutOwnerDTO;
 import youtube.model.pojo.User;
 import youtube.model.services.UserService;
@@ -22,6 +20,8 @@ public class UserController extends AbstractController {
     @Autowired
     private SessionManager sessionManager;
 
+    // Registers a user
+    // RequestBody - json with username/email/age/password/confirmPass/city information
     @PutMapping("/users")
     public RegisterResponseUserDTO register(@RequestBody RegisterRequestUserDTO userDTO) {
         return userService.register(userDTO);
@@ -41,13 +41,13 @@ public class UserController extends AbstractController {
 
     @PostMapping("/users/edit")
     public UserWithoutPasswordDTO editUser(@RequestBody EditRequestUserDTO userDTO, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.editUser(userDTO, user);
     }
 
     @DeleteMapping("/users")
     public String deleteUser(HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         userService.deleteUser(user);
         sessionManager.logoutUser(ses);
         return "You have deleted your profile successfully!";
@@ -61,26 +61,35 @@ public class UserController extends AbstractController {
 
     @GetMapping("/users/user_videos")
     public List<VideoWithoutOwnerDTO> getUserVideos(HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.getVideos(user);
     }
 
     @GetMapping("/users/user_playlists")
     public List<PlaylistWithoutOwnerDTO> getUserPlaylists(HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.getPlaylists(user);
     }
 
 
     @PostMapping("/users/subscribe/{id}")
     public String subscribe(@PathVariable int id, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.subscribe(id, user);
     }
 
     @PostMapping("/users/unsubscribe/{id}")
     public String unsubscribe(@PathVariable int id, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.unsubscribe(id, user);
+    }
+
+
+    // Verifying user's email
+    // PathVar - token sent to user
+    @GetMapping("/verify/{token}")
+    public void verifyEmail(@PathVariable(name = "token") String token, HttpSession ses) {
+        User user = sessionManager.getUnverifiedUser(ses);
+        userService.verifyEmail(token, user);
     }
 }

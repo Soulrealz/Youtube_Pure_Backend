@@ -3,6 +3,7 @@ package youtube.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import youtube.exceptions.BadRequestException;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikesDTO;
@@ -52,7 +53,8 @@ public class VideoController extends AbstractController {
         User user = sessionManager.getLoggedUser(ses);
         if (action.equals("1")) return videoService.likeVideo(user, videoID);
         else if (action.equals("-1")) return videoService.dislikeVideo(user, videoID);
-        else return videoService.neutralStateVideo(user, videoID);
+        else if (action.equals("0")) return videoService.neutralStateVideo(user, videoID);
+        else throw new BadRequestException("No such reaction possible");
     }
 
     @GetMapping("/videos/order_upload_date/{id}")

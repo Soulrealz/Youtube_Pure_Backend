@@ -2,6 +2,7 @@ package youtube.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import youtube.exceptions.BadRequestException;
 import youtube.model.dto.commentsDTO.CommentDTO;
 import youtube.model.dto.commentsDTO.EditedCommentDTO;
 import youtube.model.pojo.User;
@@ -62,6 +63,7 @@ public class CommentController extends AbstractController {
         User user = sessionManager.getLoggedUser(ses);
         if (action.equals("1")) return commentService.likeComment(user, commentID);
         else if (action.equals("-1")) return commentService.dislikeComment(user, commentID);
-        else return commentService.neutralStateComment(user, commentID);
+        else if (action.equals("0")) return commentService.neutralStateComment(user, commentID);
+        else throw new BadRequestException("No such reaction possible");
     }
 }

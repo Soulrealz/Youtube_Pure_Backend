@@ -20,20 +20,18 @@ public class VideoWithoutIDAndDislikesDTO {
     private String ownerName;
     private int likes;
 
-    public static final String selectVideosAndSortByLikes = "SELECT v.title, v.upload_date, v.description, u.username, COUNT(v.title) AS likes\n" +
-            "FROM users_like_videos AS ulv\n" +
-            "JOIN videos AS v ON (v.id = ulv.video_id)\n" +
-            "JOIN users AS u ON (u.id = v.owner_id)\n" +
-            "GROUP BY v.title\n" +
-            "ORDER BY likes DESC\n" +
-            "LIMIT ?\n" +
-            "OFFSET ?;";
-
     public VideoWithoutIDAndDislikesDTO(Video video) {
         title = video.getTitle();
         uploadDate = video.getUploadDate();
         description = video.getDescription();
         ownerName = video.getOwner().getUsername();
         likes = video.getLikedByUsers().size();
+    }
+    public VideoWithoutIDAndDislikesDTO(Video video, int _likes) {
+        title = video.getTitle();
+        uploadDate = video.getUploadDate();
+        description = video.getDescription();
+        ownerName = video.getOwner().getUsername();
+        likes = _likes;
     }
 }

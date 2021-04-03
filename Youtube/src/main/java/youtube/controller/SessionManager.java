@@ -3,6 +3,8 @@ package youtube.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import youtube.exceptions.AuthenticationException;
+import youtube.exceptions.BadRequestException;
+import youtube.exceptions.NotFoundException;
 import youtube.model.pojo.User;
 import youtube.model.repository.UserRepository;
 import javax.servlet.http.HttpSession;
@@ -21,7 +23,15 @@ public class SessionManager {
         }
         else {
             int userId = (int) session.getAttribute(LOGGED_USER_ID);
-            return repository.findById(userId).get();
+            Optional<User> user = repository.findById(userId);
+            if (user.isEmpty()) {
+                throw new NotFoundException("No such user exists");
+            }
+
+            if (user.get().getVerified()) {
+                return user.get();
+            }
+            else throw new BadRequestException("Please confirm your email address before doing anything else.");
         }
     }
 
@@ -29,6 +39,10 @@ public class SessionManager {
         if(session.getAttribute(LOGGED_USER_ID) != null){
             int userId = (int) session.getAttribute(LOGGED_USER_ID);
             Optional<User> user = repository.findById(userId);
+            if (user.isEmpty()) {
+                throw new NotFoundException("No such user exists");
+            }
+
             return user.get();
         }
         return null;

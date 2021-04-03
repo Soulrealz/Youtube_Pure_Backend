@@ -35,13 +35,13 @@ public class VideoController extends AbstractController {
 
     @PutMapping("/videos")
     public UserWithoutPasswordDTO createVideo( @RequestBody UploadVideoDTO videoDTO, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         return videoService.createVideo(videoDTO, user);
     }
 
     @PostMapping("/videos/upload/{id}")
     public String uploadVideoFile(@RequestPart MultipartFile videoFile, @PathVariable int id, HttpSession ses){
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         return videoService.uploadVideoFile(videoFile, id, user);
     }
 
@@ -50,7 +50,7 @@ public class VideoController extends AbstractController {
     // RequestParam - 1 = like, -1 = dislike, 0 = remove current status(if any)
     @PostMapping("/videos/{id}")
     public VideoWithoutIDDTO reactToVideo(@PathVariable(name = "id") int videoID, @RequestParam(name = "react") String action, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         if (action.equals("1")) return videoService.likeVideo(user, videoID);
         else if (action.equals("-1")) return videoService.dislikeVideo(user, videoID);
         else if (action.equals("0")) return videoService.neutralStateVideo(user, videoID);
@@ -71,7 +71,7 @@ public class VideoController extends AbstractController {
 
     @DeleteMapping("/videos/{id}")
     public UserWithoutPasswordDTO deleteVideo(@PathVariable int id, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         return videoService.deleteVideo(id, user);
     }
 

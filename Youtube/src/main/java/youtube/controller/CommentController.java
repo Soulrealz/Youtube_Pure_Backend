@@ -23,7 +23,7 @@ public class CommentController extends AbstractController {
     // RequestBody - comment text
     @PutMapping("/videos/{id}/comments")
     public CommentDTO makeComment(@PathVariable(name = "id") int videoID, @RequestBody String text, HttpSession ses) {
-        User User = sessionManager.getLoggedUser(ses);
+        User User = sessionManager.getVerifiedLoggedUser(ses);
         return commentService.makeComment(videoID, text, User);
     }
 
@@ -41,7 +41,7 @@ public class CommentController extends AbstractController {
     // RequestBody - new comment text
     @PostMapping("/videos/{id}/comments")
     public EditedCommentDTO editComment(@PathVariable(name = "id") int commentID, @RequestBody String text, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         return commentService.editComment(user, text, commentID);
     }
 
@@ -50,7 +50,7 @@ public class CommentController extends AbstractController {
     // PathVar - which comment to delete
     @DeleteMapping("/videos/{id}/comments")
     public String deleteComment(@PathVariable(name = "id") int commentID, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         commentService.deleteComment(user, commentID);
         return "Deleted comment";
     }
@@ -60,7 +60,7 @@ public class CommentController extends AbstractController {
     // RequestParam - 1 = like, -1 = dislike, 0 = remove current status(if any)
     @PostMapping("/comments/{id}")
     public CommentDTO reactToComment(@PathVariable(name = "id") int commentID, @RequestParam(name = "react") String action, HttpSession ses) {
-        User user = sessionManager.getLoggedUser(ses);
+        User user = sessionManager.getVerifiedLoggedUser(ses);
         if (action.equals("1")) return commentService.likeComment(user, commentID);
         else if (action.equals("-1")) return commentService.dislikeComment(user, commentID);
         else if (action.equals("0")) return commentService.neutralStateComment(user, commentID);

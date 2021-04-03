@@ -17,17 +17,21 @@ public class SessionManager {
     @Autowired
     private UserRepository repository;
 
-    public User getLoggedUser(HttpSession session){
+    // Getting verified user
+    public User getVerifiedLoggedUser(HttpSession session){
         if(session.getAttribute(LOGGED_USER_ID) == null){
             throw new AuthenticationException("You have to log in!");
         }
         else {
             int userId = (int) session.getAttribute(LOGGED_USER_ID);
+
+            // Checking if such a user exists in DB
             Optional<User> user = repository.findById(userId);
             if (user.isEmpty()) {
                 throw new NotFoundException("No such user exists");
             }
 
+            // Returns user only if user has a verified email address
             if (user.get().getVerified()) {
                 return user.get();
             }
@@ -35,9 +39,29 @@ public class SessionManager {
         }
     }
 
+    // Method to initially verify a user
+    public User getUnverifiedUser(HttpSession session) {
+        if(session.getAttribute(LOGGED_USER_ID) == null){
+            throw new AuthenticationException("You have to log in!");
+        }
+        else {
+            int userId = (int) session.getAttribute(LOGGED_USER_ID);
+
+            // Checking if such a user exists in DB
+            Optional<User> user = repository.findById(userId);
+            if (user.isEmpty()) {
+                throw new NotFoundException("No such user exists");
+            }
+
+            return user.get();
+        }
+    }
+
     public User checkIfThereIsLoggedUser(HttpSession session) {
         if(session.getAttribute(LOGGED_USER_ID) != null){
             int userId = (int) session.getAttribute(LOGGED_USER_ID);
+
+            // Checking if such a user exists in DB
             Optional<User> user = repository.findById(userId);
             if (user.isEmpty()) {
                 throw new NotFoundException("No such user exists");

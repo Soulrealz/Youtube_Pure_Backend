@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
 
 import java.time.LocalDateTime;

@@ -13,6 +13,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import youtube.model.services.EmailService;
+import youtube.model.utils.VideoWithoutPathCleaner;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +23,6 @@ import java.util.Collections;
 public class YoutubeApplication {
     public static void main(String[] args) {
         SpringApplication.run(YoutubeApplication.class, args);
-
     }
 
     @Bean

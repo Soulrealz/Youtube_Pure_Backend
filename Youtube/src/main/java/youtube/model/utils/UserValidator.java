@@ -1,6 +1,4 @@
-package youtube.model.validations;
-
-import youtube.exceptions.BadRequestException;
+package youtube.model.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

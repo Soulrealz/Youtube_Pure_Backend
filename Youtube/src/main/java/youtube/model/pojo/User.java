@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import youtube.exceptions.BadRequestException;
 import youtube.model.dto.usersDTO.EditRequestUserDTO;
 import youtube.model.dto.usersDTO.RegisterRequestUserDTO;
-import youtube.model.validations.UserValidator;
+import youtube.model.utils.UserValidator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

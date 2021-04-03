@@ -1,7 +1,6 @@
 package youtube.model.services;
 
 
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import youtube.exceptions.BadRequestException;
@@ -13,7 +12,7 @@ import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
 import youtube.model.repository.PlaylistRepository;
 import youtube.model.repository.VideoRepository;
-import youtube.model.validations.PlaylistValidator;
+import youtube.model.utils.PlaylistValidator;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

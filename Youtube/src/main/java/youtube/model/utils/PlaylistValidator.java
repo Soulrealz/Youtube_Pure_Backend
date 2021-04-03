@@ -1,4 +1,4 @@
-package youtube.model.validations;
+package youtube.model.utils;
 
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;

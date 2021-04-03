@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import youtube.exceptions.BadRequestException;
-import youtube.model.validations.UserValidator;
+import youtube.model.utils.UserValidator;
 
 import java.util.regex.Pattern;
 

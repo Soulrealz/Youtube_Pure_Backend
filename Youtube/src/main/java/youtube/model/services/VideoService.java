@@ -1,13 +1,12 @@
 package youtube.model.services;
 
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
+import youtube.model.dao.VideoDAO;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikesDTO;
@@ -18,16 +17,13 @@ import youtube.model.pojo.Video;
 import youtube.model.repository.HistoryRecordRepository;
 import youtube.model.repository.UserRepository;
 import youtube.model.repository.VideoRepository;
+import youtube.model.utils.PairVideoInt;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +38,9 @@ public class VideoService {
     @Value("${file.path}")
     private String filePath;
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
     private HistoryRecordRepository historyRecordRepository;
+    @Autowired
+    private VideoDAO videoDAO;
 
     public VideoWithoutIDDTO getByName(String title) {
         if (videoRepository.findByTitle(title) == null) {
@@ -183,33 +179,17 @@ public class VideoService {
 
         return returnedVideos;
     }
+    public List<VideoWithoutIDAndDislikesDTO> orderByLikes(int limit, int offset) {
+        // Get all videos and their like count
+        List<PairVideoInt> videos = videoDAO.orderByLikes(limit, offset);
+        List<VideoWithoutIDAndDislikesDTO> videosDTO = new ArrayList<>();
 
-    public List<VideoWithoutIDAndDislikesDTO> sortByLikes(int limit, int offset) {
-        String sql = VideoWithoutIDAndDislikesDTO.selectVideosAndSortByLikes;
-        List<VideoWithoutIDAndDislikesDTO> videos = new ArrayList<>();
-
-        try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, limit);
-            ps.setInt(2, offset);
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                VideoWithoutIDAndDislikesDTO video = new VideoWithoutIDAndDislikesDTO();
-                video.setTitle(rs.getString("title"));
-                video.setUploadDate(rs.getTimestamp("upload_date").toLocalDateTime());
-                video.setDescription(rs.getString("description"));
-                video.setOwnerName(rs.getString("username"));
-                video.setLikes(rs.getInt("likes"));
-
-                videos.add(video);
-            }
-
-            return videos;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        // Build DTO for response
+        for (PairVideoInt v : videos) {
+            videosDTO.add(new VideoWithoutIDAndDislikesDTO(v.getVideo(), v.getLikes()));
         }
-        return null;
+
+        return videosDTO;
     }
 
     public UserWithoutPasswordDTO deleteVideo(int id, User user) {

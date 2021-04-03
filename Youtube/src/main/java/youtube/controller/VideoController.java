@@ -66,7 +66,7 @@ public class VideoController extends AbstractController {
     // RequestParam offset = how many to skip (paging)
     @GetMapping("/videos/sort_by_likes")
     public List<VideoWithoutIDAndDislikesDTO> sortByLikes(@RequestParam(name = "limit") int limit, @RequestParam(name = "offset") int offset) {
-        return videoService.sortByLikes(limit, offset);
+        return videoService.orderByLikes(limit, offset);
     }
 
     @DeleteMapping("/videos/{id}")

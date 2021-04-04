@@ -25,22 +25,28 @@ public class RegisterRequestUserDTO {
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     public void validateUserInformation(){
-        //checking if the email format is correct
+        
+        // Checks if the username format is correct
+        if(!UserValidator.validateUsername(username)){
+            throw new BadRequestException("You have entered invalid username.");
+        }
+
+        // Checks if the email format is correct
         if(!UserValidator.validateEmail(email)) {
             throw new BadRequestException("You have entered invalid email.");
         }
 
-        //checking if the entered confirmation password is correct
+        // Checks if the entered confirmation password is correct
         if(!UserValidator.validatePasswordConfirmation(password, confirmPassword)) {
             throw new BadRequestException("Passwords do not match.");
         }
 
-        //check if the entered city is correct
+        // Checks if the entered city is correct
         if(!UserValidator.validateCity(city)) {
             throw new BadRequestException("You have entered invalid city.");
         }
 
-        //check if the entered age are correct
+        // Checks if the entered age are correct
         if(!UserValidator.validateAge(age)) {
             throw new BadRequestException("You have entered invalid age.");
         }

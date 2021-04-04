@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
+import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.commentsDTO.CommentDTO;
 import youtube.model.dto.commentsDTO.EditedCommentDTO;
 import youtube.model.pojo.Comment;
@@ -68,7 +69,7 @@ public class CommentService {
         return new EditedCommentDTO(comment);
     }
 
-    public void deleteComment(User user, int commentID) {
+    public GenericResponseDTO deleteComment(User user, int commentID) {
         // Check if comment exists or if trying to delete comment of other user
         Comment comment = returnExistingComment(commentRepository.findById(commentID));
         if (!user.getComments().contains(comment)) {
@@ -76,6 +77,7 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
+        return new GenericResponseDTO("Deleted Comment");
     }
 
     public CommentDTO likeComment(User user, int commentID) {

@@ -3,6 +3,7 @@ package youtube.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import youtube.exceptions.BadRequestException;
+import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.commentsDTO.CommentDTO;
 import youtube.model.dto.commentsDTO.EditedCommentDTO;
 import youtube.model.pojo.User;
@@ -27,14 +28,12 @@ public class CommentController extends AbstractController {
         return commentService.makeComment(videoID, text, User);
     }
 
-
     // Showing all comments on X video
     // PathVar - which video
     @GetMapping("/videos/{id}/comments")
     public List<CommentDTO> showComments(@PathVariable(name = "id") int videoID) {
         return commentService.getComments(videoID);
     }
-
 
     // Editing X comment
     // PathVar - which comment to edit
@@ -45,17 +44,15 @@ public class CommentController extends AbstractController {
         return commentService.editComment(user, text, commentID);
     }
 
-
     // Deleting X comment on Y video
     // PathVar - which comment to delete
     @DeleteMapping("/videos/{id}/comments")
-    public String deleteComment(@PathVariable(name = "id") int commentID, HttpSession ses) {
+    public GenericResponseDTO deleteComment(@PathVariable(name = "id") int commentID, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
-        commentService.deleteComment(user, commentID);
-        return "Deleted comment";
+        return commentService.deleteComment(user, commentID);
     }
 
-
+    // Liking/Disliking/removing status from comment
     // PathVar - which comment to like/dislike/remove like/remove dislike
     // RequestParam - 1 = like, -1 = dislike, 0 = remove current status(if any)
     @PostMapping("/comments/{id}")

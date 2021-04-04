@@ -25,8 +25,8 @@ public class Swagger {
     private ApiInfo apiDetails() {
         return new ApiInfo(
                 "Youtube API",
-                "Every endpoint and request sample",
-                "1.0",
+                "Every endpoint and request",
+                null,
                 null,
                 null,
                 null,

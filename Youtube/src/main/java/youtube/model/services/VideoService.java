@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dao.VideoDAO;
+import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikesDTO;
@@ -63,7 +64,7 @@ public class VideoService {
         video = videoRepository.save(video);
         return new UserWithoutPasswordDTO(userRepository.findByUsername(user.getUsername()));
     }
-    public String uploadVideoFile(MultipartFile videoFile, int id, User user) {
+    public GenericResponseDTO uploadVideoFile(MultipartFile videoFile, int id, User user) {
         Optional<Video> video = videoRepository.findById(id);
         // Checks if there is video with this id before we can upload media to it
         if (video.isEmpty()) {
@@ -90,7 +91,7 @@ public class VideoService {
         }
 
         videoRepository.save(video.get());
-        return "You have successfully added a media file to your video";
+        return new GenericResponseDTO("You have successfully added a media file to your video");
     }
 
     public byte[] getMedia(int id, User user) {
@@ -218,7 +219,7 @@ public class VideoService {
     }
 
     // Getting views of certain video
-    public String getViews(int id) {
+    public GenericResponseDTO getViews(int id) {
         Optional<Video> video = videoRepository.findById(id);
 
         if(video.isEmpty()) {
@@ -226,6 +227,6 @@ public class VideoService {
         }
 
         List<HistoryRecord> currentRecord =  historyRecordRepository.findAllByWatchedVideo(video.get());
-        return "This video has " + currentRecord.size() + " views.";
+        return new GenericResponseDTO("This video has " + currentRecord.size() + " views.");
     }
 }

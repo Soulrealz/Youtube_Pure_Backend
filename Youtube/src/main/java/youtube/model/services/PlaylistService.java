@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
+import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutIdDTO;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.pojo.Playlist;
@@ -25,8 +26,7 @@ public class PlaylistService {
     @Autowired
     private VideoRepository videoRepository;
 
-    public void createPlaylist(String title, User user) {
-
+    public GenericResponseDTO createPlaylist(String title, User user) {
         // Checks if there is already a playlist with this name
         if(playlistRepository.findByTitle(title) != null) {
             throw new BadRequestException("This playlist title is already used.");
@@ -37,6 +37,25 @@ public class PlaylistService {
         playlist.setOwner(user);
         playlist.setCreatedDate(LocalDateTime.now());
         playlistRepository.save(playlist);
+
+        return new GenericResponseDTO("You have created new playlist.");
+    }
+    public GenericResponseDTO deletePlaylist(int id, User user) {
+        Optional<Playlist> playlist = playlistRepository.findById(id);
+
+        // Checks if the playlist, the user want to delete, actually exists
+        if(playlist.isEmpty()) {
+            throw new NotFoundException("This playlist doesn't exist.");
+        }
+
+        // Checks if the playlist, the user want to delete, is his
+        if(playlist.get().getOwner() != user) {
+            throw new BadRequestException("You can't delete someone else's playlist.");
+        }
+
+        playlistRepository.delete(playlist.get());
+
+        return new GenericResponseDTO("You have successfully deleted " + playlist.get().getTitle() + " playlist.");
     }
 
     public PlaylistWithoutIdDTO getByName(String title) {
@@ -70,7 +89,6 @@ public class PlaylistService {
         playlistRepository.save(currentPlaylist.get());
         return new PlaylistWithoutOwnerDTO(playlistRepository.findByTitle(currentPlaylist.get().getTitle()));
     }
-
     public PlaylistWithoutOwnerDTO removeVideo(User user, int id, String title) {
         Optional<Playlist> currentPlaylist = playlistRepository.findById(id);
         PlaylistValidator.validate(currentPlaylist, user);
@@ -90,22 +108,5 @@ public class PlaylistService {
         currentPlaylist.get().getVideos().remove(video);
         playlistRepository.save(currentPlaylist.get());
         return new PlaylistWithoutOwnerDTO(playlistRepository.findByTitle(currentPlaylist.get().getTitle()));
-    }
-
-    public String deletePlaylist(int id, User user) {
-        Optional<Playlist> playlist = playlistRepository.findById(id);
-
-        // Checks if the playlist, the user want to delete, actually exists
-        if(playlist.isEmpty()) {
-            throw new NotFoundException("This playlist doesn't exist.");
-        }
-
-        // Checks if the playlist, the user want to delete, is his
-        if(playlist.get().getOwner() != user) {
-            throw new BadRequestException("You can't delete someone else's playlist.");
-        }
-
-        playlistRepository.delete(playlist.get());
-        return "You have successfully deleted " + playlist.get().getTitle() + " playlist.";
     }
 }

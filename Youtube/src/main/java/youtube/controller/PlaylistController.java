@@ -2,6 +2,7 @@ package youtube.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutIdDTO;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.pojo.User;
@@ -17,7 +18,7 @@ public class PlaylistController extends AbstractController {
     @Autowired
     private SessionManager sessionManager;
 
-    // Getting playlist by given name
+    // RequestParam - name of playlist we want to get
     @GetMapping("/playlists")
     public PlaylistWithoutIdDTO getPlaylistByName(@RequestParam String title) {
         return playlistService.getByName(title);
@@ -44,16 +45,15 @@ public class PlaylistController extends AbstractController {
     // Creating playlist
     // RequestParam - title of the new playlist
     @PutMapping("/playlists/create_playlist")
-    public String createPlaylist(@RequestParam String title, HttpSession ses) {
+    public GenericResponseDTO createPlaylist(@RequestParam String title, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
-        playlistService.createPlaylist(title, user);
-        return "You have created new playlist.";
+        return playlistService.createPlaylist(title, user);
     }
 
     // Deleting playlist
     // PathVar - id of playlist we want to delete
     @DeleteMapping("/playlists/{id}")
-    public String deletePlaylist(@PathVariable int id, HttpSession ses) {
+    public GenericResponseDTO deletePlaylist(@PathVariable int id, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return playlistService.deletePlaylist(id, user);
     }

@@ -3,6 +3,7 @@ package youtube.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.dto.usersDTO.*;
 import youtube.model.dto.videosDTO.VideoWithoutOwnerDTO;
@@ -36,7 +37,8 @@ public class UserController extends AbstractController {
         return loggedUser;
     }
 
-    // Getting user by its username
+    // Get user
+    // RequestParam - user we want to get
     @GetMapping("/users")
     public UserWithoutPasswordDTO getUserByUsername(@RequestParam String username) {
         return userService.getUserByName(username);
@@ -52,18 +54,18 @@ public class UserController extends AbstractController {
 
     // Deleting user own account, if he is logged in only
     @DeleteMapping("/users")
-    public String deleteUser(HttpSession ses) {
+    public GenericResponseDTO deleteUser(HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         userService.deleteUser(user);
         sessionManager.logoutUser(ses);
-        return "You have deleted your profile successfully!";
+        return new GenericResponseDTO("You have deleted your profile successfully!");
     }
 
     // Logout
     @PostMapping("/users/logout")
-    public String logout(HttpSession ses) {
+    public GenericResponseDTO logout(HttpSession ses) {
         sessionManager.logoutUser(ses);
-        return "You have logged out.";
+        return new GenericResponseDTO("You have logged out.");
     }
 
     // Getting all videos of the logged user
@@ -83,7 +85,7 @@ public class UserController extends AbstractController {
     // Subscribing to another user
     // PathVar - id of the user we want to subscribe to
     @PostMapping("/users/subscribe/{id}")
-    public String subscribe(@PathVariable int id, HttpSession ses) {
+    public GenericResponseDTO subscribe(@PathVariable int id, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.subscribe(id, user);
     }
@@ -91,7 +93,7 @@ public class UserController extends AbstractController {
     // Unsubscribing from another user
     // PathVar - id of the user we want to unsubscribe from
     @PostMapping("/users/unsubscribe/{id}")
-    public String unsubscribe(@PathVariable int id, HttpSession ses) {
+    public GenericResponseDTO unsubscribe(@PathVariable int id, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.unsubscribe(id, user);
     }
@@ -99,8 +101,8 @@ public class UserController extends AbstractController {
     // Verifying user's email
     // PathVar - token sent to user
     @GetMapping("/verify/{token}")
-    public void verifyEmail(@PathVariable(name = "token") String token, HttpSession ses) {
+    public GenericResponseDTO verifyEmail(@PathVariable(name = "token") String token, HttpSession ses) {
         User user = sessionManager.getUnverifiedUser(ses);
-        userService.verifyEmail(token, user);
+        return userService.verifyEmail(token, user);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
+import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.dto.usersDTO.*;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
@@ -139,7 +140,7 @@ public class UserService {
         return returnedPlaylists;
     }
 
-    public String subscribe(int id, User user) {
+    public GenericResponseDTO subscribe(int id, User user) {
         Optional<User> subscribeToUser = userRepository.findById(id);
 
         // Checks if the user we want to subscribe to exists
@@ -159,10 +160,10 @@ public class UserService {
 
         subscribeToUser.get().getSubscribers().add(user);
         userRepository.save(subscribeToUser.get());
-        return "You have successfully subscribed to " + subscribeToUser.get().getUsername();
+        return new GenericResponseDTO("You have successfully subscribed to " + subscribeToUser.get().getUsername());
     }
 
-    public String unsubscribe(int id, User user) {
+    public GenericResponseDTO unsubscribe(int id, User user) {
         Optional<User> unsubscribeToUser = userRepository.findById(id);
 
         // Checks if the user we want to unsubscribe from exists
@@ -182,11 +183,12 @@ public class UserService {
 
         unsubscribeToUser.get().getSubscribers().remove(user);
         userRepository.save(unsubscribeToUser.get());
-        return "You have successfully unsubscribed to " + unsubscribeToUser.get().getUsername();
+        return new GenericResponseDTO("You have successfully unsubscribed to " + unsubscribeToUser.get().getUsername());
     }
 
-    public void verifyEmail(String token, User user) {
+    public GenericResponseDTO verifyEmail(String token, User user) {
         user.setVerified(true);
         userRepository.save(user);
+        return new GenericResponseDTO("Email verified.");
     }
 }

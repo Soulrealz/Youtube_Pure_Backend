@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.BadRequestException;
+import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikesDTO;
@@ -21,11 +22,13 @@ public class VideoController extends AbstractController {
     @Autowired
     private SessionManager sessionManager;
 
+    // RequestParam name of video we want to get (videos are unique)
     @GetMapping("/videos")
     public VideoWithoutIDDTO getVideoByName(@RequestParam String title) {
         return videoService.getByName(title);
     }
 
+    // PathVar - which video to get
     @GetMapping(value = "/videos/media/{id}", produces = "video/mp4")
     public byte[] getMediaOfVideo(@PathVariable int id, HttpSession ses) {
         // Checking if there is logged user, so if there is we can add data to history table
@@ -33,18 +36,19 @@ public class VideoController extends AbstractController {
         return videoService.getMedia(id, user);
     }
 
+    // RequestBody - title/description json
     @PutMapping("/videos")
-    public UserWithoutPasswordDTO createVideo( @RequestBody UploadVideoDTO videoDTO, HttpSession ses) {
+    public UserWithoutPasswordDTO createVideo(@RequestBody UploadVideoDTO videoDTO, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return videoService.createVideo(videoDTO, user);
     }
 
+    // RequestPart - actual video file
     @PostMapping("/videos/upload/{id}")
-    public String uploadVideoFile(@RequestPart MultipartFile videoFile, @PathVariable int id, HttpSession ses){
+    public GenericResponseDTO uploadVideoFile(@RequestPart MultipartFile videoFile, @PathVariable int id, HttpSession ses){
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return videoService.uploadVideoFile(videoFile, id, user);
     }
-
 
     // PathVar - which video to like/dislike/remove like/remove dislike
     // RequestParam - 1 = like, -1 = dislike, 0 = remove current status(if any)
@@ -57,6 +61,7 @@ public class VideoController extends AbstractController {
         else throw new BadRequestException("No such reaction possible");
     }
 
+    //
     @GetMapping("/videos/order_upload_date/{id}")
     public List<VideoWithoutIDDTO> orderByUploadDate(@PathVariable int id){
         return videoService.orderByUploadDate(id);
@@ -69,14 +74,16 @@ public class VideoController extends AbstractController {
         return videoService.orderByLikes(limit, offset);
     }
 
+    // PathVar - which video to delete
     @DeleteMapping("/videos/{id}")
     public UserWithoutPasswordDTO deleteVideo(@PathVariable int id, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return videoService.deleteVideo(id, user);
     }
 
+    // PathVar - which video's views to show
     @GetMapping("/videos/views/{id}")
-    public String getViews(@PathVariable int id){
+    public GenericResponseDTO getViews(@PathVariable int id){
         return videoService.getViews(id);
     }
 }

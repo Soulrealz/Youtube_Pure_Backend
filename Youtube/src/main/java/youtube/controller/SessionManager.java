@@ -57,6 +57,7 @@ public class SessionManager {
         }
     }
 
+    // Checking if there is logged user in the moment WITHOUT throwing an exception if there isn't
     public User checkIfThereIsLoggedUser(HttpSession session) {
         if(session.getAttribute(LOGGED_USER_ID) != null){
             int userId = (int) session.getAttribute(LOGGED_USER_ID);

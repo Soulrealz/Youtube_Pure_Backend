@@ -12,6 +12,10 @@ public interface VideoRepository extends JpaRepository<Video, Integer> {
     List<Video> findAllByTitle(String title);
     Video findByTitle(String title);
     List<Video> findAllByOwner(User user);
+
+    // Retrieving all videos and ordering them by there upload date
     List<Video> findAllByIdGreaterThanOrderByUploadDate(int id);
+
+    // Retrieving all videos
     List<Video> findAllByIdGreaterThan(int id);
 }

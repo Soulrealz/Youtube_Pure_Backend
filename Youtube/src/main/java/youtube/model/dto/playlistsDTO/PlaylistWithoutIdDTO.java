@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// Playlist DTO which includes the whole information for a certain playlist without its id
 @Component
 @NoArgsConstructor
 @Getter

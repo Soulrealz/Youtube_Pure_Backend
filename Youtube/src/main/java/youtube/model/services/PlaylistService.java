@@ -26,6 +26,8 @@ public class PlaylistService {
     private VideoRepository videoRepository;
 
     public void createPlaylist(String title, User user) {
+
+        // Checks if there is already a playlist with this name
         if(playlistRepository.findByTitle(title) != null) {
             throw new BadRequestException("This playlist title is already used.");
         }
@@ -38,6 +40,8 @@ public class PlaylistService {
     }
 
     public PlaylistWithoutIdDTO getByName(String title) {
+
+        // Checks if playlist with this name exists
         if(playlistRepository.findByTitle(title) == null) {
             throw new NotFoundException("There is no playlist with that name.");
         }
@@ -52,10 +56,12 @@ public class PlaylistService {
 
         Video video = videoRepository.findByTitle(title);
 
+        // Checks if the video, the user want to add, actually exists
         if(video == null) {
             throw new BadRequestException("The video, you want to add, doesn't exist.");
         }
 
+        // Checks if the playlist already has this video in it
         if(currentPlaylist.get().getVideos().contains(video)) {
             throw new BadRequestException("This playlist already contains this video.");
         }
@@ -71,10 +77,12 @@ public class PlaylistService {
 
         Video video = videoRepository.findByTitle(title);
 
+        // Checks if the video, the user want to remove, actually exists
         if(video == null) {
             throw new BadRequestException("The video, you want to add, doesn't exist.");
         }
 
+        // Checks if this video is included in this playlist at all
         if(!currentPlaylist.get().getVideos().contains(video)) {
             throw new BadRequestException("This playlist already doesn't contain this video.");
         }
@@ -87,10 +95,12 @@ public class PlaylistService {
     public String deletePlaylist(int id, User user) {
         Optional<Playlist> playlist = playlistRepository.findById(id);
 
+        // Checks if the playlist, the user want to delete, actually exists
         if(playlist.isEmpty()) {
             throw new NotFoundException("This playlist doesn't exist.");
         }
 
+        // Checks if the playlist, the user want to delete, is his
         if(playlist.get().getOwner() != user) {
             throw new BadRequestException("You can't delete someone else's playlist.");
         }

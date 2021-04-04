@@ -13,6 +13,7 @@ import youtube.model.pojo.Video;
 import java.util.ArrayList;
 import java.util.List;
 
+// User DTO showing the information of a user, without his password
 @Component
 @Getter
 @Setter

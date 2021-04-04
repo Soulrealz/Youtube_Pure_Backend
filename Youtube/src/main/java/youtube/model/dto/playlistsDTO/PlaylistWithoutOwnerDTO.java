@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// Playlist DTO which includes the whole information for a certain playlist without its id and owner
+// It is used to show playlists of already KNOWN user
 @Component
 @Setter
 @Getter

@@ -43,6 +43,7 @@ public class VideoService {
     private VideoDAO videoDAO;
 
     public VideoWithoutIDDTO getByName(String title) {
+        // Checks if video with this name actually exists
         if (videoRepository.findByTitle(title) == null) {
             throw new NotFoundException("There is no video with that name.");
         }
@@ -52,6 +53,7 @@ public class VideoService {
     }
 
     public UserWithoutPasswordDTO createVideo(UploadVideoDTO videoDTO, User user) {
+        // Checks if there is already video with that name
         if (videoRepository.findByTitle(videoDTO.getTitle()) != null) {
             throw new BadRequestException("This video title is already used.");
         }
@@ -63,14 +65,17 @@ public class VideoService {
     }
     public String uploadVideoFile(MultipartFile videoFile, int id, User user) {
         Optional<Video> video = videoRepository.findById(id);
+        // Checks if there is video with this id before we can upload media to it
         if (video.isEmpty()) {
             throw new NotFoundException("The video you want to add media to, doesn't exist.");
         }
 
+        // Checks if the video we want to upload media to doesn't have one already
         if (video.get().getPath() != null) {
             throw new BadRequestException("This video already has media file.");
         }
 
+        // Checks if the video we want to upload media to is ours
         if (video.get().getOwner() != user) {
             throw new BadRequestException("You can't upload files on other user videos.");
         }
@@ -87,9 +92,10 @@ public class VideoService {
         videoRepository.save(video.get());
         return "You have successfully added a media file to your video";
     }
+
     public byte[] getMedia(int id, User user) {
         Optional<Video> video = videoRepository.findById(id);
-
+        // Checks if video with this id actually exists
         if (video.isEmpty()) {
             throw new NotFoundException("The video you want to watch doesn't exist.");
         }
@@ -103,6 +109,7 @@ public class VideoService {
             historyRecordRepository.save(historyRecord);
         }
 
+        // Checks if the video we want to watch has media
         if(video.get().getPath() == null) {
             throw new NotFoundException("This video doesn't have media file.");
         }
@@ -164,12 +171,14 @@ public class VideoService {
 
         return new VideoWithoutIDDTO(video);
     }
+
     private Video returnExistingVideo(Optional<Video> video) {
         if (video.isEmpty()) {
             throw new NotFoundException("Comment doesn't exist");
         } else return video.get();
     }
 
+    // Retrieving videos and ordering them by upload date
     public List<VideoWithoutIDDTO> orderByUploadDate(int id) {
         List<Video> videos = videoRepository.findAllByIdGreaterThanOrderByUploadDate(id);
         List<VideoWithoutIDDTO> returnedVideos = new ArrayList<>();
@@ -179,6 +188,7 @@ public class VideoService {
 
         return returnedVideos;
     }
+
     public List<VideoWithoutIDAndDislikesDTO> orderByLikes(int limit, int offset) {
         // Get all videos and their like count
         List<PairVideoInt> videos = videoDAO.orderByLikes(limit, offset);
@@ -207,6 +217,7 @@ public class VideoService {
         return new UserWithoutPasswordDTO(userRepository.findByUsername(user.getUsername()));
     }
 
+    // Getting views of certain video
     public String getViews(int id) {
         Optional<Video> video = videoRepository.findById(id);
 

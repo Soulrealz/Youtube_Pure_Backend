@@ -8,7 +8,7 @@ import youtube.model.pojo.User;
 
 import java.time.LocalDateTime;
 
-
+// User DTO, used for showing the information of the newly registered user
 @Setter
 @Getter
 @NoArgsConstructor

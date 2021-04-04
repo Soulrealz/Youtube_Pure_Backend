@@ -8,5 +8,4 @@ import youtube.model.pojo.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findByEmail(String email);
     User findByUsername(String username);
-    //User findById(int id);
 }

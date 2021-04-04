@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+// User DTO used for logging in account
 @NoArgsConstructor
 @Getter
 @Setter

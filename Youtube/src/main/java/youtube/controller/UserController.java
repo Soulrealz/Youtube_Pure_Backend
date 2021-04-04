@@ -27,6 +27,8 @@ public class UserController extends AbstractController {
         return userService.register(userDTO);
     }
 
+    // Login a user
+    // RequestBody - json with username/password
     @PostMapping("/users")
     public UserWithoutPasswordDTO login(@RequestBody LoginUserDTO loginDTO, HttpSession session) {
         UserWithoutPasswordDTO loggedUser = userService.login(loginDTO);
@@ -34,17 +36,21 @@ public class UserController extends AbstractController {
         return loggedUser;
     }
 
+    // Getting user by its username
     @GetMapping("/users")
     public UserWithoutPasswordDTO getUserByUsername(@RequestParam String username) {
         return userService.getUserByName(username);
     }
 
+    // Editing user
+    // RequestBody - json with email/age/password/confirmPass/city, if certain value is null it won't be changed
     @PostMapping("/users/edit")
     public UserWithoutPasswordDTO editUser(@RequestBody EditRequestUserDTO userDTO, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.editUser(userDTO, user);
     }
 
+    // Deleting user own account, if he is logged in only
     @DeleteMapping("/users")
     public String deleteUser(HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
@@ -53,37 +59,42 @@ public class UserController extends AbstractController {
         return "You have deleted your profile successfully!";
     }
 
+    // Logout
     @PostMapping("/users/logout")
     public String logout(HttpSession ses) {
         sessionManager.logoutUser(ses);
         return "You have logged out.";
     }
 
+    // Getting all videos of the logged user
     @GetMapping("/users/user_videos")
     public List<VideoWithoutOwnerDTO> getUserVideos(HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.getVideos(user);
     }
 
+    // Getting all playlists of the logged user
     @GetMapping("/users/user_playlists")
     public List<PlaylistWithoutOwnerDTO> getUserPlaylists(HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.getPlaylists(user);
     }
 
-
+    // Subscribing to another user
+    // PathVar - id of the user we want to subscribe to
     @PostMapping("/users/subscribe/{id}")
     public String subscribe(@PathVariable int id, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.subscribe(id, user);
     }
 
+    // Unsubscribing from another user
+    // PathVar - id of the user we want to unsubscribe from
     @PostMapping("/users/unsubscribe/{id}")
     public String unsubscribe(@PathVariable int id, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return userService.unsubscribe(id, user);
     }
-
 
     // Verifying user's email
     // PathVar - token sent to user

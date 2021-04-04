@@ -8,6 +8,8 @@ import youtube.model.pojo.Video;
 
 import java.time.LocalDateTime;
 
+// Video DTO which includes the whole information for a certain playlist without its owner
+// It is used to show videos of already KNOWN user
 @Component
 @Setter
 @Getter

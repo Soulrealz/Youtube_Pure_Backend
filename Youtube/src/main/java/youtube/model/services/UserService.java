@@ -69,10 +69,12 @@ public class UserService {
 
     public UserWithoutPasswordDTO login(LoginUserDTO loginDTO) {
         User user = userRepository.findByUsername(loginDTO.getUsername());
+        // Checks if the user entered correct username and password
         if(user == null) {
             throw new AuthenticationException("Wrong credentials.");
         }
         else {
+            // Encode the entered pass and check if it matches the original one
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             if(encoder.matches(loginDTO.getPassword(), user.getPassword())) {
                 return new UserWithoutPasswordDTO(user);
@@ -85,6 +87,7 @@ public class UserService {
 
     public UserWithoutPasswordDTO getUserByName(String username) {
         User user = userRepository.findByUsername(username);
+        // Checks if there is user with that username
         if(user == null) {
             throw new NotFoundException("User with this username doesn't exist.");
         }
@@ -99,13 +102,15 @@ public class UserService {
         return new UserWithoutPasswordDTO(user);
     }
 
+    // Deleting user's own profile
     public void deleteUser(User user) {
         userRepository.delete(user);
     }
 
-
+    // Retrieving all videos of the logged user
     public List<VideoWithoutOwnerDTO> getVideos(User user) {
         List<Video> userVideos = videoRepository.findAllByOwner(user);
+        // Checks if user has any videos at all
         if(userVideos.size() == 0) {
             throw new NotFoundException("You don't have uploaded videos.");
         }
@@ -118,8 +123,10 @@ public class UserService {
         return returnedVideos;
     }
 
+    // Retrieving all playlists of the logged user
     public List<PlaylistWithoutOwnerDTO> getPlaylists(User user) {
         List<Playlist> userPlaylists = playlistRepository.findAllByOwner(user);
+        // Checks if user has any playlists at all
         if(userPlaylists.size() == 0) {
             throw new NotFoundException("You don't have created playlists.");
         }
@@ -135,14 +142,17 @@ public class UserService {
     public String subscribe(int id, User user) {
         Optional<User> subscribeToUser = userRepository.findById(id);
 
+        // Checks if the user we want to subscribe to exists
         if(subscribeToUser.isEmpty()) {
             throw new NotFoundException("The user you want to subscribe to doesn't exist");
         }
 
+        // Checks if the user account we want to subscribe to is not ourselves
         if(subscribeToUser.get() == user) {
             throw new BadRequestException("You can't subscribe to yourself.");
         }
 
+        // Checks if we haven't been subscribed to this user already
         if(subscribeToUser.get().getSubscribers().contains(user)) {
             throw new BadRequestException("You are already subscribed to this user.");
         }
@@ -155,14 +165,17 @@ public class UserService {
     public String unsubscribe(int id, User user) {
         Optional<User> unsubscribeToUser = userRepository.findById(id);
 
+        // Checks if the user we want to unsubscribe from exists
         if(unsubscribeToUser.isEmpty()) {
             throw new NotFoundException("The user you want to unsubscribe to doesn't exist");
         }
 
+        // Checks if the user account we want to unsubscribe from is not ourselves
         if(unsubscribeToUser.get() == user) {
             throw new BadRequestException("You can't unsubscribe to yourself.");
         }
 
+        // Checks if we haven't been unsubscribed from this user already
         if(!unsubscribeToUser.get().getSubscribers().contains(user)) {
             throw new BadRequestException("You are already not subscribed to this user.");
         }

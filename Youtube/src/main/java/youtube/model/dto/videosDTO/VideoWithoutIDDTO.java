@@ -9,6 +9,7 @@ import youtube.model.pojo.Video;
 
 import java.time.LocalDateTime;
 
+//Video DTO which includes the whole information for a certain video without its id
 @Getter
 @Setter
 @Component

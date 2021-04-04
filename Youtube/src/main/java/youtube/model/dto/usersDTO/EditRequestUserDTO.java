@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+// User DTO used when someone wants to change certain information in his account
 @Component
 @Setter
 @Getter

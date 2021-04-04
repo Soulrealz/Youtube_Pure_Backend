@@ -2,7 +2,6 @@ package youtube.model.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dto.GenericResponseDTO;

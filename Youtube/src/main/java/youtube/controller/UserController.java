@@ -3,6 +3,7 @@ package youtube.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import youtube.exceptions.BadRequestException;
 import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.dto.usersDTO.*;
@@ -32,6 +33,10 @@ public class UserController extends AbstractController {
     // RequestBody - json with username/password
     @PostMapping("/users")
     public UserWithoutPasswordDTO login(@RequestBody LoginUserDTO loginDTO, HttpSession session) {
+        User user = sessionManager.checkIfThereIsLoggedUser(session);
+        if(user != null) {
+            throw new BadRequestException("First you have to log out.");
+        }
         UserWithoutPasswordDTO loggedUser = userService.login(loginDTO);
         sessionManager.loginUser(session, loggedUser.getId());
         return loggedUser;

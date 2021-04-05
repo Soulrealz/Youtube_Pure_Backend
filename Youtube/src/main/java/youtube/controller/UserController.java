@@ -108,8 +108,12 @@ public class UserController extends AbstractController {
 
     // Returns all users that match (even if not entirely) the string in the dto
     // RequestBody - search keyword
+    // RequestParam - limit = how many to display per page
+    // RequestParam - offset = from which element to start (ignore X number of elements)
     @GetMapping("/users/search")
-    public List<UserWithIDAndUsernameDTO> searchByName(@RequestBody SearchUserDTO name) {
-        return userService.searchByName(name);
+    public List<UserWithIDAndUsernameDTO> searchByName(@RequestBody SearchUserDTO name,
+                                                       @RequestParam(name = "limit") int limit,
+                                                       @RequestParam(name = "offset") int offset) {
+        return userService.searchByName(name, limit, offset);
     }
 }

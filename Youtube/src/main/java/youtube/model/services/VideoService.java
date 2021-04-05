@@ -245,8 +245,8 @@ public class VideoService {
         return new GenericResponseDTO("This video has " + currentRecord.size() + " views.");
     }
 
-    public List<VideoWithIDTitleDateDescDTO> searchByName(SearchUserDTO name) {
-        List<Video> videos = videoDAO.searchByName(name.getName());
+    public List<VideoWithIDTitleDateDescDTO> searchByName(SearchUserDTO name, int limit, int offset) {
+        List<Video> videos = videoDAO.searchByName(name.getName(), limit, offset);
         List<VideoWithIDTitleDateDescDTO> videosDTO = new ArrayList<>();
 
         for (Video v : videos) {

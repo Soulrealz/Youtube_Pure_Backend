@@ -33,7 +33,7 @@ public class VideoDAO {
             "OFFSET ?;";
 
     private static final String selectAllWhereTitleLike =
-            "SELECT * FROM videos WHERE title LIKE ?;";
+            "SELECT * FROM videos WHERE title LIKE ? LIMIT ? OFFSET ?;";
 
     // Pair of current video and how many likes it has
     public List<PairVideoInt> orderByLikes(int limit, int offset) {
@@ -65,7 +65,7 @@ public class VideoDAO {
         }
     }
 
-    public List<Video> searchByName(String likeParam) {
+    public List<Video> searchByName(String likeParam, int limit, int offset) {
         // Adding % to make it be xxxWORDxxx and still match
         String param = "%" + likeParam +"%";
 
@@ -73,6 +73,8 @@ public class VideoDAO {
         try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
             PreparedStatement ps = connection.prepareStatement(selectAllWhereTitleLike);
             ps.setString(1, param);
+            ps.setInt(2, limit);
+            ps.setInt(3, offset);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

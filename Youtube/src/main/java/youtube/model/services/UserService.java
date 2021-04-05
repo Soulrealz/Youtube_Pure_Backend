@@ -195,8 +195,8 @@ public class UserService {
         return new GenericResponseDTO("Email verified.");
     }
 
-    public List<UserWithIDAndUsernameDTO> searchByName(SearchUserDTO name) {
-        List<User> users = userDAO.searchByName(name.getName());
+    public List<UserWithIDAndUsernameDTO> searchByName(SearchUserDTO name, int limit, int offset) {
+        List<User> users = userDAO.searchByName(name.getName(), limit, offset);
         List<UserWithIDAndUsernameDTO> usersDTO = new ArrayList<>();
 
         for (User u : users) {

@@ -19,16 +19,18 @@ public class UserDAO {
     private JdbcTemplate jdbcTemplate;
 
     private static final String selectAllWhereUsernameLike =
-            "SELECT * FROM users WHERE username LIKE ?;";
+            "SELECT * FROM users WHERE username LIKE ? LIMIT ? OFFSET ?;";
 
-    public List<User> searchByName(String likeParam) {
+    public List<User> searchByName(String likeParam, int limit, int offset) {
         // Adding % to make it be xxxWORDxxx and still match
-        String param = "%" + likeParam +"%";
+        String param = "%" + likeParam + "%";
 
         List<User> users = new ArrayList<>();
         try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
             PreparedStatement ps = connection.prepareStatement(selectAllWhereUsernameLike);
             ps.setString(1, param);
+            ps.setInt(2, limit);
+            ps.setInt(3, offset);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

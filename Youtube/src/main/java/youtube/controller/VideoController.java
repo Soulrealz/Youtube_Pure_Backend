@@ -88,10 +88,14 @@ public class VideoController extends AbstractController {
         return videoService.getViews(id);
     }
 
-    // Returns all users that match (even if not entirely) the string in the dto
+    // Returns all videos that match (even if not entirely) the string in the dto
     // RequestBody - search keyword
+    // RequestParam - limit = how many to display per page
+    // RequestParam - offset = from which element to start (ignore X number of elements)
     @GetMapping("/videos/search")
-    public List<VideoWithIDTitleDateDescDTO> searchByName(@RequestBody SearchUserDTO name) {
-        return videoService.searchByName(name);
+    public List<VideoWithIDTitleDateDescDTO> searchByName(@RequestBody SearchUserDTO name,
+                                                          @RequestParam(name = "limit") int limit,
+                                                          @RequestParam(name = "offset") int offset) {
+        return videoService.searchByName(name, limit, offset);
     }
 }

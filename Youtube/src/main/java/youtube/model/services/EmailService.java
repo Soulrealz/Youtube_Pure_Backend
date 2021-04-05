@@ -32,7 +32,7 @@ public class EmailService {
         javaMailSender.send(simpleMailMessage);
     }
 
-    private String generateToken(String mailToHash) {
+    public String generateToken(String mailToHash) {
         String hash = null;
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA");

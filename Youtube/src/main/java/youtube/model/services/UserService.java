@@ -1,11 +1,9 @@
 package youtube.model.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
@@ -13,7 +11,6 @@ import youtube.model.dao.UserDAO;
 import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.dto.usersDTO.*;
-import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.dto.videosDTO.VideoWithoutOwnerDTO;
 import youtube.model.pojo.Playlist;
 import youtube.model.pojo.User;
@@ -22,10 +19,6 @@ import youtube.model.repository.PlaylistRepository;
 import youtube.model.repository.UserRepository;
 import youtube.model.repository.VideoRepository;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -190,9 +183,13 @@ public class UserService {
     }
 
     public GenericResponseDTO verifyEmail(String token, User user) {
-        user.setVerified(true);
-        userRepository.save(user);
-        return new GenericResponseDTO("Email verified.");
+        String checkToken = emailService.generateToken(user.getEmail());
+        if (checkToken.equals(token)) {
+            user.setVerified(true);
+            userRepository.save(user);
+            return new GenericResponseDTO("Email verified.");
+        }
+        else throw new AuthenticationException("Invalid validation token");
     }
 
     public List<UserWithIDAndUsernameDTO> searchByName(SearchUserDTO name, int limit, int offset) {

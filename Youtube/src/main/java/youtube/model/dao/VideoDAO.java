@@ -4,8 +4,10 @@ package youtube.model.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import youtube.exceptions.CustomSQLException;
 import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
+import youtube.model.utils.Log4JLogger;
 import youtube.model.utils.PairVideoInt;
 
 import java.sql.Connection;
@@ -56,9 +58,9 @@ public class VideoDAO {
 
             return videos;
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            Log4JLogger.getLogger().error("Could not execute SQL query.\n", throwables);
+            throw new CustomSQLException("Unavailable resource");
         }
-        return null;
     }
 
 }

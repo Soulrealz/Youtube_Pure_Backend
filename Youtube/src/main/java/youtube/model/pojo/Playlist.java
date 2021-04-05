@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -33,6 +34,6 @@ public class Playlist {
             inverseJoinColumns = {@JoinColumn(name = "video_id")}
     )
     @JsonManagedReference
-    List<Video> videos;
+    List<Video> videos = new ArrayList<>();
 
 }

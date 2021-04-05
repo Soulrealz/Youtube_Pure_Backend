@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import youtube.exceptions.*;
 import youtube.model.dto.ErrorDTO;
 
+
 public class AbstractController {
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

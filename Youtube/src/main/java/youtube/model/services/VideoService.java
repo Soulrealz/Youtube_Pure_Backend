@@ -20,6 +20,7 @@ import youtube.model.repository.HistoryRecordRepository;
 import youtube.model.repository.UserRepository;
 import youtube.model.repository.VideoRepository;
 import youtube.model.utils.Log4JLogger;
+import youtube.model.utils.FileValidator;
 import youtube.model.utils.PairVideoInt;
 import youtube.model.utils.VideoCredentialsValidator;
 
@@ -76,6 +77,11 @@ public class VideoService {
         if (video.isEmpty()) {
             throw new NotFoundException("The video you want to add media to, doesn't exist.");
         }
+
+        // Checking if the file extension is mp4
+        FileValidator.validateFileExtension(videoFile);
+        // Checking if the file size exceeds the max allowed file size
+        FileValidator.validateMaxSize(videoFile);
 
         // Checks if the video we want to upload media to doesn't have one already
         if (video.get().getPath() != null) {

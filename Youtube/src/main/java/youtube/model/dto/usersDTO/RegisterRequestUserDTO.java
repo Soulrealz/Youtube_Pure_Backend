@@ -23,8 +23,6 @@ public class RegisterRequestUserDTO {
     private String confirmPassword;
     private String city;
 
-    private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-
     public void validateUserInformation(){
 
         // Checks if the username format is correct
@@ -35,6 +33,11 @@ public class RegisterRequestUserDTO {
         // Checks if the email format is correct
         if(!UserValidator.validateEmail(email)) {
             throw new BadRequestException("You have entered invalid email.");
+        }
+
+        // Checks if the password is strong enough
+        if(!UserValidator.validatePassword(password)) {
+            throw new BadRequestException("You have entered too weak password.");
         }
 
         // Checks if the entered confirmation password is correct

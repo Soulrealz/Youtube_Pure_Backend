@@ -17,13 +17,15 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PlaylistWithoutIdDTO {
+public class ResponsePlaylistDTO {
+    private int id;
     private String title;
     private String ownerName;
     private LocalDateTime createdDate;
     private List<VideoWithoutOwnerDTO> videos;
 
-    public PlaylistWithoutIdDTO(Playlist playlist) {
+    public ResponsePlaylistDTO(Playlist playlist) {
+        id = playlist.getId();
         title = playlist.getTitle();
         ownerName = playlist.getOwner().getUsername();
         createdDate = playlist.getCreatedDate();

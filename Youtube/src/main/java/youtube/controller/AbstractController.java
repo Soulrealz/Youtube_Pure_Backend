@@ -32,4 +32,8 @@ public class AbstractController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDTO handleIOException(CustomIOException e) { return new ErrorDTO(e.getMessage()); }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDTO handleFileNotFoundException(CustomFileNotFoundException e) { return new ErrorDTO(e.getMessage()); }
 }

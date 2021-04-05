@@ -20,7 +20,7 @@ public class VideoWithoutPathCleaner {
     @Autowired
     VideoRepository videoRepository;
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "0 33 10 * * *")
     public void deleteVideosWithoutMedia(){
         List<Video> toDeleteVideos = videoRepository.findAllByIdGreaterThan(ID);
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
+import youtube.exceptions.BadRequestException;
 
 // User DTO used to take the information which the user has given for creating his new video
 @Component

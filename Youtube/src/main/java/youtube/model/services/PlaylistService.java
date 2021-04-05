@@ -27,6 +27,9 @@ public class PlaylistService {
     private VideoRepository videoRepository;
 
     public GenericResponseDTO createPlaylist(String title, User user) {
+        if(title.length() <= 0){
+            throw new BadRequestException("This title is invalid.");
+        }
         // Checks if there is already a playlist with this name
         if(playlistRepository.findByTitle(title) != null) {
             throw new BadRequestException("This playlist title is already used.");

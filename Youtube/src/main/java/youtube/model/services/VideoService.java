@@ -21,6 +21,7 @@ import youtube.model.repository.UserRepository;
 import youtube.model.repository.VideoRepository;
 import youtube.model.utils.Log4JLogger;
 import youtube.model.utils.PairVideoInt;
+import youtube.model.utils.VideoCredentialsValidator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -56,10 +57,13 @@ public class VideoService {
     }
 
     public UserWithoutPasswordDTO createVideo(UploadVideoDTO videoDTO, User user) {
+        VideoCredentialsValidator.validate(videoDTO.getTitle(), videoDTO.getDescription());
+
         // Checks if there is already video with that name
         if (videoRepository.findByTitle(videoDTO.getTitle()) != null) {
             throw new BadRequestException("This video title is already used.");
         }
+
         Video video = new Video(videoDTO);
         video.setOwner(user);
 

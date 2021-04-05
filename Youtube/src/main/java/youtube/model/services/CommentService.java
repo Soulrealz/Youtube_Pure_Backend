@@ -6,6 +6,7 @@ import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.commentsDTO.CommentDTO;
+import youtube.model.dto.commentsDTO.CommentWithTextDTO;
 import youtube.model.dto.commentsDTO.EditedCommentDTO;
 import youtube.model.pojo.Comment;
 import youtube.model.pojo.User;
@@ -27,7 +28,7 @@ public class CommentService {
     @Autowired
     private UserRepository userRepository;
 
-    public CommentDTO makeComment(int videoID, String text, User user) {
+    public CommentDTO makeComment(int videoID, CommentWithTextDTO text, User user) {
         // Check if video exists
         Optional<Video> video = videoRepository.findById(videoID);
         if (video.isEmpty()) {
@@ -35,7 +36,7 @@ public class CommentService {
         }
 
         // Make and save comment
-        Comment comment = new Comment(text, user, video.get());
+        Comment comment = new Comment(text.getText(), user, video.get());
         commentRepository.save(comment);
 
         return new CommentDTO(comment);
@@ -54,7 +55,7 @@ public class CommentService {
         return ls;
     }
 
-    public EditedCommentDTO editComment(User user, String text, int commentID) {
+    public EditedCommentDTO editComment(User user, CommentWithTextDTO text, int commentID) {
         // Check if comment exists or if trying to edit comment of another user
         Comment comment = returnExistingComment(commentRepository.findById(commentID));
         if (!user.getComments().contains(comment)) {
@@ -62,7 +63,7 @@ public class CommentService {
         }
 
         // Edit and save updated comment
-        comment.setText(text);
+        comment.setText(text.getText());
         commentRepository.save(comment);
 
         return new EditedCommentDTO(comment);

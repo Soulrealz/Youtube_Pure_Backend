@@ -20,11 +20,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class PlaylistWithoutOwnerDTO {
+    private int id;
     private String title;
     private LocalDateTime uploadDate;
     private List<VideoWithoutOwnerDTO> videos;
 
     public PlaylistWithoutOwnerDTO(Playlist playlist) {
+        id = playlist.getId();
         title = playlist.getTitle();
         uploadDate = playlist.getCreatedDate();
         videos = new ArrayList<>();

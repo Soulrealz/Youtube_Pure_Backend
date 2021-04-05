@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -49,6 +50,8 @@ public class Comment {
         uID = user.getId();
         vID = video.getId();
         commentedOn = LocalDateTime.now();
+        likedByUsers = new ArrayList<>();
+        dislikedByUsers = new ArrayList<>();
     }
 
 }

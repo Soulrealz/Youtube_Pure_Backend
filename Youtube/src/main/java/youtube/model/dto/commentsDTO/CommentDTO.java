@@ -16,12 +16,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Component
 public class CommentDTO {
+    private int id;
     private String text;
     private LocalDateTime commentedOn;
     private int likes;
     private int dislikes;
 
     public CommentDTO(Comment comment) {
+        id = comment.getId();
         text = comment.getText();
         commentedOn = comment.getCommentedOn();
         likes = comment.getLikedByUsers().size();

@@ -10,7 +10,6 @@ import youtube.exceptions.NotFoundException;
 import youtube.model.dao.VideoDAO;
 import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.usersDTO.SearchUserDTO;
-import youtube.model.dto.usersDTO.UserWithIDAndUsernameDTO;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
 import youtube.model.dto.videosDTO.VideoWithIDTitleDateDescDTO;
@@ -196,7 +195,7 @@ public class VideoService {
 
     // Retrieving videos and ordering them by upload date
     public List<VideoWithoutIDDTO> orderByUploadDate() {
-        List<Video> videos = videoRepository.findAllByIdGreaterThanOrderByUploadDate(0);
+        List<Video> videos = videoRepository.findAllByIdGreaterThanOrderByUploadDateDesc(0);
         List<VideoWithoutIDDTO> returnedVideos = new ArrayList<>();
         for(Video video: videos) {
             returnedVideos.add(new VideoWithoutIDDTO(video));

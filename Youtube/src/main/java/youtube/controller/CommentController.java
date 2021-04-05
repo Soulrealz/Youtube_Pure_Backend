@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import youtube.exceptions.BadRequestException;
 import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.commentsDTO.CommentDTO;
+import youtube.model.dto.commentsDTO.CommentWithTextDTO;
 import youtube.model.dto.commentsDTO.EditedCommentDTO;
 import youtube.model.pojo.User;
 import youtube.model.services.CommentService;
@@ -23,7 +24,7 @@ public class CommentController extends AbstractController {
     // PathVar - video
     // RequestBody - comment text
     @PutMapping("/videos/{id}/comments")
-    public CommentDTO makeComment(@PathVariable(name = "id") int videoID, @RequestBody String text, HttpSession ses) {
+    public CommentDTO makeComment(@PathVariable(name = "id") int videoID, @RequestBody CommentWithTextDTO text, HttpSession ses) {
         User User = sessionManager.getVerifiedLoggedUser(ses);
         return commentService.makeComment(videoID, text, User);
     }
@@ -39,7 +40,7 @@ public class CommentController extends AbstractController {
     // PathVar - which comment to edit
     // RequestBody - new comment text
     @PostMapping("/videos/{id}/comments")
-    public EditedCommentDTO editComment(@PathVariable(name = "id") int commentID, @RequestBody String text, HttpSession ses) {
+    public EditedCommentDTO editComment(@PathVariable(name = "id") int commentID, @RequestBody CommentWithTextDTO text, HttpSession ses) {
         User user = sessionManager.getVerifiedLoggedUser(ses);
         return commentService.editComment(user, text, commentID);
     }

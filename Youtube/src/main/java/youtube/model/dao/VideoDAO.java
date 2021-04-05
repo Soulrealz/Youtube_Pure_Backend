@@ -32,6 +32,9 @@ public class VideoDAO {
             "LIMIT ?\n" +
             "OFFSET ?;";
 
+    private static final String selectAllWhereTitleLike =
+            "SELECT * FROM videos WHERE title LIKE ?;";
+
     // Pair of current video and how many likes it has
     public List<PairVideoInt> orderByLikes(int limit, int offset) {
         List<PairVideoInt> videos = new ArrayList<>();
@@ -62,4 +65,29 @@ public class VideoDAO {
         }
     }
 
+    public List<Video> searchByName(String likeParam) {
+        // Adding % to make it be xxxWORDxxx and still match
+        String param = "%" + likeParam +"%";
+
+        List<Video> videos = new ArrayList<>();
+        try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(selectAllWhereTitleLike);
+            ps.setString(1, param);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Video video = new Video(rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getTimestamp("upload_date").toLocalDateTime(),
+                        rs.getString("description"));
+
+                videos.add(video);
+            }
+
+            return videos;
+        } catch (java.sql.SQLException throwables) {
+            Log4JLogger.getLogger().error("Could not execute SQL query.\n", throwables);
+            throw new youtube.exceptions.SQLException("Unavailable resource");
+        }
+    }
 }

@@ -9,8 +9,11 @@ import youtube.exceptions.IOException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dao.VideoDAO;
 import youtube.model.dto.GenericResponseDTO;
+import youtube.model.dto.usersDTO.SearchUserDTO;
+import youtube.model.dto.usersDTO.UserWithIDAndUsernameDTO;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
+import youtube.model.dto.videosDTO.VideoWithIDTitleDateDescDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikesDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDDTO;
 import youtube.model.pojo.HistoryRecord;
@@ -182,8 +185,8 @@ public class VideoService {
     }
 
     // Retrieving videos and ordering them by upload date
-    public List<VideoWithoutIDDTO> orderByUploadDate(int id) {
-        List<Video> videos = videoRepository.findAllByIdGreaterThanOrderByUploadDate(id);
+    public List<VideoWithoutIDDTO> orderByUploadDate() {
+        List<Video> videos = videoRepository.findAllByIdGreaterThanOrderByUploadDate(0);
         List<VideoWithoutIDDTO> returnedVideos = new ArrayList<>();
         for(Video video: videos) {
             returnedVideos.add(new VideoWithoutIDDTO(video));
@@ -230,5 +233,16 @@ public class VideoService {
 
         List<HistoryRecord> currentRecord =  historyRecordRepository.findAllByWatchedVideo(video.get());
         return new GenericResponseDTO("This video has " + currentRecord.size() + " views.");
+    }
+
+    public List<VideoWithIDTitleDateDescDTO> searchByName(SearchUserDTO name) {
+        List<Video> videos = videoDAO.searchByName(name.getName());
+        List<VideoWithIDTitleDateDescDTO> videosDTO = new ArrayList<>();
+
+        for (Video v : videos) {
+            videosDTO.add(new VideoWithIDTitleDateDescDTO(v.getId(), v.getTitle(), v.getUploadDate(), v.getDescription()));
+        }
+
+        return videosDTO;
     }
 }

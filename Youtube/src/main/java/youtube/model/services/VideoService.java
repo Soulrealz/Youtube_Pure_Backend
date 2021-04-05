@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.BadRequestException;
-import youtube.exceptions.CustomIOException;
+import youtube.exceptions.IOException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dao.VideoDAO;
 import youtube.model.dto.GenericResponseDTO;
@@ -24,7 +24,6 @@ import youtube.model.utils.PairVideoInt;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
@@ -88,9 +87,9 @@ public class VideoService {
         try (OutputStream os = new FileOutputStream(pFile)) {
             os.write(videoFile.getBytes());
             video.get().setPath(pFile.getAbsolutePath());
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             Log4JLogger.getLogger().error("Critical IO exception.\n", e);
-            throw new CustomIOException("Bad Input/Output");
+            throw new IOException("Bad Input/Output");
         }
 
         videoRepository.save(video.get());
@@ -122,7 +121,7 @@ public class VideoService {
         File pFile = new File(path);
         try {
             return Files.readAllBytes(pFile.toPath());
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             throw new NotFoundException("There was a problem with the video.");
         }
     }

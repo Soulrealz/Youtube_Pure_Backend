@@ -1,9 +1,8 @@
 package youtube.model.utils;
 
 import org.apache.log4j.*;
-import org.springframework.beans.factory.annotation.Value;
-import youtube.exceptions.CustomFileNotFoundException;
-import youtube.exceptions.CustomIOException;
+import youtube.exceptions.FileNotFoundException;
+import youtube.exceptions.IOException;
 
 import java.io.*;
 
@@ -42,12 +41,12 @@ public class Log4JLogger {
                 BufferedReader file = null;
                 file = new BufferedReader(new FileReader("pathToLogs.txt"));
                 return file.readLine();
-            } catch (FileNotFoundException e) {
+            } catch (java.io.FileNotFoundException e) {
                 Log4JLogger.getLogger().error("Logs.txt file not found.\n", e);
-                throw new CustomFileNotFoundException("File not found");
-            } catch (IOException e) {
+                throw new FileNotFoundException("File not found");
+            } catch (java.io.IOException e) {
                 Log4JLogger.getLogger().error("Critical IO exception.\n", e);
-                throw new CustomIOException("Bad Input/Output");
+                throw new IOException("Bad Input/Output");
             }
         }
     }

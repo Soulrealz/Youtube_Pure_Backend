@@ -27,13 +27,13 @@ public class AbstractController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorDTO handleSQLException(CustomSQLException e) { return new ErrorDTO(e.getMessage()); }
+    public ErrorDTO handleSQLException(SQLException e) { return new ErrorDTO(e.getMessage()); }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorDTO handleIOException(CustomIOException e) { return new ErrorDTO(e.getMessage()); }
+    public ErrorDTO handleIOException(IOException e) { return new ErrorDTO(e.getMessage()); }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorDTO handleFileNotFoundException(CustomFileNotFoundException e) { return new ErrorDTO(e.getMessage()); }
+    public ErrorDTO handleFileNotFoundException(FileNotFoundException e) { return new ErrorDTO(e.getMessage()); }
 }

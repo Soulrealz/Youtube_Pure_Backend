@@ -5,12 +5,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.BadRequestException;
-import youtube.exceptions.CustomIOException;
+import youtube.exceptions.IOException;
 import youtube.exceptions.NotFoundException;
 import youtube.model.dao.VideoDAO;
 import youtube.model.dto.GenericResponseDTO;
+import youtube.model.dto.usersDTO.SearchUserDTO;
+import youtube.model.dto.usersDTO.UserWithIDAndUsernameDTO;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
+import youtube.model.dto.videosDTO.VideoWithIDTitleDateDescDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikesDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDDTO;
 import youtube.model.pojo.HistoryRecord;
@@ -26,7 +29,6 @@ import youtube.model.utils.VideoCredentialsValidator;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
@@ -98,9 +100,9 @@ public class VideoService {
         try (OutputStream os = new FileOutputStream(pFile)) {
             os.write(videoFile.getBytes());
             video.get().setPath(pFile.getAbsolutePath());
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             Log4JLogger.getLogger().error("Critical IO exception.\n", e);
-            throw new CustomIOException("Bad Input/Output");
+            throw new IOException("Bad Input/Output");
         }
 
         videoRepository.save(video.get());
@@ -132,7 +134,7 @@ public class VideoService {
         File pFile = new File(path);
         try {
             return Files.readAllBytes(pFile.toPath());
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             throw new NotFoundException("There was a problem with the video.");
         }
     }
@@ -193,8 +195,8 @@ public class VideoService {
     }
 
     // Retrieving videos and ordering them by upload date
-    public List<VideoWithoutIDDTO> orderByUploadDate(int id) {
-        List<Video> videos = videoRepository.findAllByIdGreaterThanOrderByUploadDate(id);
+    public List<VideoWithoutIDDTO> orderByUploadDate() {
+        List<Video> videos = videoRepository.findAllByIdGreaterThanOrderByUploadDate(0);
         List<VideoWithoutIDDTO> returnedVideos = new ArrayList<>();
         for(Video video: videos) {
             returnedVideos.add(new VideoWithoutIDDTO(video));
@@ -241,5 +243,16 @@ public class VideoService {
 
         List<HistoryRecord> currentRecord =  historyRecordRepository.findAllByWatchedVideo(video.get());
         return new GenericResponseDTO("This video has " + currentRecord.size() + " views.");
+    }
+
+    public List<VideoWithIDTitleDateDescDTO> searchByName(SearchUserDTO name) {
+        List<Video> videos = videoDAO.searchByName(name.getName());
+        List<VideoWithIDTitleDateDescDTO> videosDTO = new ArrayList<>();
+
+        for (Video v : videos) {
+            videosDTO.add(new VideoWithIDTitleDateDescDTO(v.getId(), v.getTitle(), v.getUploadDate(), v.getDescription()));
+        }
+
+        return videosDTO;
     }
 }

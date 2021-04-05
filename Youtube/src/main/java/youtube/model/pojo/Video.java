@@ -50,4 +50,11 @@ public class Video {
         this.description = videoDTO.getDescription();
         this.uploadDate = LocalDateTime.now();
     }
+
+    public Video(int id, String title, LocalDateTime uploadDate, String description) {
+        this.id = id;
+        this.title = title;
+        this.uploadDate = uploadDate;
+        this.description = description;
+    }
 }

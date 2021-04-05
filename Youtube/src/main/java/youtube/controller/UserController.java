@@ -105,4 +105,11 @@ public class UserController extends AbstractController {
         User user = sessionManager.getUnverifiedUser(ses);
         return userService.verifyEmail(token, user);
     }
+
+    // Returns all users that match (even if not entirely) the string in the dto
+    // RequestBody - search keyword
+    @GetMapping("/users/search")
+    public List<UserWithIDAndUsernameDTO> searchByName(@RequestBody SearchUserDTO name) {
+        return userService.searchByName(name);
+    }
 }

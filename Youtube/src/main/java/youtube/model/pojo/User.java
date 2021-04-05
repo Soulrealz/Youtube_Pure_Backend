@@ -110,8 +110,13 @@ public class User {
       city = userDTO.getCity();
    }
 
+   public User(int id, String username, Boolean verified) {
+      this.id = id;
+      this.username = username;
+      this.verified = verified;
+   }
 
-   //method used for editing user profile
+   // method used for editing user profile
    public void editUser(EditRequestUserDTO userDTO){
       if(userDTO.getEmail() != null) {
          if(!UserValidator.validateEmail(email)) {

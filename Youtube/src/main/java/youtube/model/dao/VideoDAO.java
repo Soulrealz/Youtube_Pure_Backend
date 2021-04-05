@@ -4,7 +4,7 @@ package youtube.model.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import youtube.exceptions.CustomSQLException;
+import youtube.exceptions.SQLException;
 import youtube.model.pojo.User;
 import youtube.model.pojo.Video;
 import youtube.model.utils.Log4JLogger;
@@ -13,7 +13,6 @@ import youtube.model.utils.PairVideoInt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +31,9 @@ public class VideoDAO {
             "ORDER BY likes DESC\n" +
             "LIMIT ?\n" +
             "OFFSET ?;";
+
+    private static final String selectAllWhereTitleLike =
+            "SELECT * FROM videos WHERE title LIKE ?;";
 
     // Pair of current video and how many likes it has
     public List<PairVideoInt> orderByLikes(int limit, int offset) {
@@ -57,10 +59,35 @@ public class VideoDAO {
             }
 
             return videos;
-        } catch (SQLException throwables) {
+        } catch (java.sql.SQLException throwables) {
             Log4JLogger.getLogger().error("Could not execute SQL query.\n", throwables);
-            throw new CustomSQLException("Unavailable resource");
+            throw new SQLException("Unavailable resource");
         }
     }
 
+    public List<Video> searchByName(String likeParam) {
+        // Adding % to make it be xxxWORDxxx and still match
+        String param = "%" + likeParam +"%";
+
+        List<Video> videos = new ArrayList<>();
+        try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(selectAllWhereTitleLike);
+            ps.setString(1, param);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Video video = new Video(rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getTimestamp("upload_date").toLocalDateTime(),
+                        rs.getString("description"));
+
+                videos.add(video);
+            }
+
+            return videos;
+        } catch (java.sql.SQLException throwables) {
+            Log4JLogger.getLogger().error("Could not execute SQL query.\n", throwables);
+            throw new youtube.exceptions.SQLException("Unavailable resource");
+        }
+    }
 }

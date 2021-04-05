@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.AuthenticationException;
 import youtube.exceptions.BadRequestException;
 import youtube.exceptions.NotFoundException;
+import youtube.model.dao.UserDAO;
 import youtube.model.dto.GenericResponseDTO;
 import youtube.model.dto.playlistsDTO.PlaylistWithoutOwnerDTO;
 import youtube.model.dto.usersDTO.*;
@@ -41,6 +42,8 @@ public class UserService {
     private PlaylistRepository playlistRepository;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private UserDAO userDAO;
 
     public RegisterResponseUserDTO register(RegisterRequestUserDTO userDTO){
         // Check if there is already user with this email
@@ -190,5 +193,16 @@ public class UserService {
         user.setVerified(true);
         userRepository.save(user);
         return new GenericResponseDTO("Email verified.");
+    }
+
+    public List<UserWithIDAndUsernameDTO> searchByName(SearchUserDTO name) {
+        List<User> users = userDAO.searchByName(name.getName());
+        List<UserWithIDAndUsernameDTO> usersDTO = new ArrayList<>();
+
+        for (User u : users) {
+            usersDTO.add(new UserWithIDAndUsernameDTO(u.getId(), u.getUsername()));
+        }
+
+        return usersDTO;
     }
 }

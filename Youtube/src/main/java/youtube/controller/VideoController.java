@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youtube.exceptions.BadRequestException;
 import youtube.model.dto.GenericResponseDTO;
+import youtube.model.dto.usersDTO.SearchUserDTO;
 import youtube.model.dto.usersDTO.UserWithoutPasswordDTO;
 import youtube.model.dto.videosDTO.UploadVideoDTO;
+import youtube.model.dto.videosDTO.VideoWithIDTitleDateDescDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDAndDislikesDTO;
 import youtube.model.dto.videosDTO.VideoWithoutIDDTO;
 import youtube.model.pojo.User;
@@ -61,10 +63,9 @@ public class VideoController extends AbstractController {
         else throw new BadRequestException("No such reaction possible");
     }
 
-    //
-    @GetMapping("/videos/order_upload_date/{id}")
-    public List<VideoWithoutIDDTO> orderByUploadDate(@PathVariable int id){
-        return videoService.orderByUploadDate(id);
+    @GetMapping("/videos/order_upload_date")
+    public List<VideoWithoutIDDTO> orderByUploadDate(){
+        return videoService.orderByUploadDate();
     }
 
     // RequestParam limit = how many to show
@@ -85,5 +86,12 @@ public class VideoController extends AbstractController {
     @GetMapping("/videos/views/{id}")
     public GenericResponseDTO getViews(@PathVariable int id){
         return videoService.getViews(id);
+    }
+
+    // Returns all users that match (even if not entirely) the string in the dto
+    // RequestBody - search keyword
+    @GetMapping("/videos/search")
+    public List<VideoWithIDTitleDateDescDTO> searchByName(@RequestBody SearchUserDTO name) {
+        return videoService.searchByName(name);
     }
 }

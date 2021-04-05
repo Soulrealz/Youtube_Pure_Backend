@@ -116,7 +116,7 @@ public class User {
       this.verified = verified;
    }
 
-   //method used for editing user profile
+   // method used for editing user profile
    public void editUser(EditRequestUserDTO userDTO){
       if(userDTO.getEmail() != null) {
          if(!UserValidator.validateEmail(email)) {

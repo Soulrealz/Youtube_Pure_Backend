@@ -22,9 +22,10 @@ public class UserDAO {
             "SELECT * FROM users WHERE username LIKE ?;";
 
     public List<User> searchByName(String likeParam) {
-        List<User> users = new ArrayList<>();
+        // Adding % to make it be xxxWORDxxx and still match
         String param = "%" + likeParam +"%";
 
+        List<User> users = new ArrayList<>();
         try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
             PreparedStatement ps = connection.prepareStatement(selectAllWhereUsernameLike);
             ps.setString(1, param);
@@ -35,6 +36,7 @@ public class UserDAO {
                         rs.getString("username"),
                         rs.getBoolean("verified"));
 
+                // Checking if returned user is verified, will not display unverified users
                 if (user.getVerified()) {
                     users.add(user);
                 }
